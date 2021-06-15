@@ -8,3 +8,4 @@ Library           implement.py
 *** Test Cases ***
 test Function 
     ${users2} =	test
+    Should Be True   ${users2}[0]==True

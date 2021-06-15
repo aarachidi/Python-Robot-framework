@@ -12,8 +12,8 @@ class MyFirstGUI:
         self.label2 = Label(master, text="This is a string with color", fg="#3300CC").grid(row=2, column=4)
         self.var = DoubleVar() 
         self.slider =  Scale(master, from_=0.00, to=1.0,orient=HORIZONTAL, length=400, variable = self.var,tickinterval=0.1, resolution=0.01, command="").grid(row = 3, column=4)
-        self.greet_button = Button(master, text="Accept", command=self.accept).grid(row=15, column=1)
-        self.close_button = Button(master, text="Fail", command=self.quit1).grid(row=15, column=7)
+        self.greet_button = Button(master, text="Accept", command=self.accept, bg= "#1ED454").grid(row=15, column=1)
+        self.close_button = Button(master, text="Fail", command=self.quit1, bg= "#E00A1D").grid(row=15, column=7)
         
 
     def accept(self):
