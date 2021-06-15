@@ -7,8 +7,9 @@ Library           implement.py
 *** Keywords ***
 Custom Dialogs
     ${users2} =	test
-    Should Be True   ${users2}[0]==True
-    Should Be True   ${users2}[1]>=0.3
+    Should Be True   ${users2}[0]>=1
+    Should Be True   ${users2}[1]==True
+    Should Be True   ${users2}[2]>=0.3
 
 *** Test Cases ***
 test Function 
