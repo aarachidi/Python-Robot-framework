@@ -18,7 +18,7 @@ pip install robotframework
 
 Clone the repository
 ```git
-git clone https://git-ferme.easii-ic.com/cdde_easiiic_stage/stageachraf/tree/master/Robot-framework-Dialogs
+git clone https://git-ferme.easii-ic.com/cdde_easiiic_stage/stageachraf
 ```
 Run command
 ```bash
