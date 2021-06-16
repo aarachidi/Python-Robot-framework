@@ -14,6 +14,10 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install robotFr
 pip install robotframework
 ```
 
+Install qrcode packages for the QRcode
+```bash
+pip install qrcode[pil]
+```
 ## Usage
 
 Clone the repository
