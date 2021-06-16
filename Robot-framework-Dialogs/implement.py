@@ -18,23 +18,29 @@ def generateQRcode():
 class MyFirstGUI:
     def __init__(self, master):
         self.master = master
-        master.geometry("800x500")
+        master.geometry("600x400")
         self.attr1 = ""
         master.title("A simple GUI")
 
-        self.label1 = Label(master, text="Enter a value in this input :", bg="#10D3D5").grid(row=0, column=4)
+        self.label1 = Label(master, text="Enter a value in this input :", bg="#10D3D5").place(x=180,y=5)
         self.varEntry = DoubleVar()
-        self.entry1 = Entry(master, textvariable = self.varEntry).grid(row=1, column = 4)
-        self.label2 = Label(master, text="This is a string with color", fg="#3300CC").grid(row=2, column=4)
+        self.entry1 = Entry(master, textvariable = self.varEntry).place(x=180,y=30)
+        self.label2 = Label(master, text="This is a string with color", fg="#3300CC").place(x=180,y=60)
         self.varSlider = DoubleVar() 
-        self.slider =  Scale(master, from_=0.00, to=1.0,orient=HORIZONTAL, length=400, variable = self.varSlider,tickinterval=0.1, resolution=0.01, command="").grid(row = 3, column=4)
+        self.slider =  Scale(master, from_=0.00, to=1.0,orient=HORIZONTAL, length=400, variable = self.varSlider,tickinterval=0.1, resolution=0.01, command="").place(x=80,y=80)
 
         #qrCode
         self.QRcode = generateQRcode()
         self.img = ImageTk.PhotoImage(image = self.QRcode)
-        self.labelQR = Label(master, image=self.img).grid(row=4, column=2)
-        self.greet_button = Button(master, text="Accept", command=self.accept, bg= "#1ED454").grid(row=15, column=1)
-        self.close_button = Button(master, text="Fail", command=self.quit1, bg= "#E00A1D").grid(row=15, column=7)
+        self.labelQR = Label(master, image=self.img).place(x=20,y=140)
+
+        #Image
+        self.img2 = ImageTk.PhotoImage(file = "easii-ic.png")
+        self.labelEntr = Label(master, image=self.img2).place(x=300,y=140)
+
+        #button
+        self.greet_button = Button(master, text="Accept", command=self.accept, bg= "#1ED454").place(x=20,y=350)
+        self.close_button = Button(master, text="Fail", command=self.quit1, bg= "#E00A1D").place(x=550,y=350)
         
 
     def accept(self):
