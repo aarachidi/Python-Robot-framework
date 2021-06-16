@@ -19,7 +19,7 @@ class MyFirstGUI:
     def __init__(self, master):
         self.master = master
         master.geometry("600x400")
-        self.attr1 = ""
+        self.attr1 = False
         master.title("A simple GUI")
 
         self.label1 = Label(master, text="Enter a value in this input :", bg="#10D3D5")
@@ -64,7 +64,7 @@ class MyFirstGUI:
 
     def entryHandler(self, event):
         self.master.quit()
-        
+
 def test():
     root = Tk()
     my_gui = MyFirstGUI(root)
@@ -74,4 +74,3 @@ def test():
     li.append(my_gui.attr1)
     li.append(my_gui.varSlider.get())
     return(li)
-test()
