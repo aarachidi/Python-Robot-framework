@@ -22,25 +22,37 @@ class MyFirstGUI:
         self.attr1 = ""
         master.title("A simple GUI")
 
-        self.label1 = Label(master, text="Enter a value in this input :", bg="#10D3D5").place(x=180,y=5)
+        self.label1 = Label(master, text="Enter a value in this input :", bg="#10D3D5")
+        self.label1.place(x=180,y=5)
+        
+        #Input 
         self.varEntry = DoubleVar()
-        self.entry1 = Entry(master, textvariable = self.varEntry).place(x=180,y=30)
-        self.label2 = Label(master, text="This is a string with color", fg="#3300CC").place(x=180,y=60)
+        self.entry1 = Entry(master, textvariable = self.varEntry)
+        self.entry1.place(x=180,y=30)
+        self.entry1.bind('<Return>', self.entryHandler)
+
+        self.label2 = Label(master, text="This is a string with color", fg="#3300CC")
+        self.label2.place(x=180,y=60)
         self.varSlider = DoubleVar() 
-        self.slider =  Scale(master, from_=0.00, to=1.0,orient=HORIZONTAL, length=400, variable = self.varSlider,tickinterval=0.1, resolution=0.01, command="").place(x=80,y=80)
+        self.slider =  Scale(master, from_=0.00, to=1.0,orient=HORIZONTAL, length=400, variable = self.varSlider,tickinterval=0.1, resolution=0.01, command="")
+        self.slider.place(x=80,y=80)
 
         #qrCode
         self.QRcode = generateQRcode()
         self.img = ImageTk.PhotoImage(image = self.QRcode)
-        self.labelQR = Label(master, image=self.img).place(x=20,y=140)
+        self.labelQR = Label(master, image=self.img)
+        self.labelQR.place(x=20,y=140)
 
         #Image
         self.img2 = ImageTk.PhotoImage(file = "easii-ic.png")
-        self.labelEntr = Label(master, image=self.img2).place(x=300,y=140)
+        self.labelEntr = Label(master, image=self.img2)
+        self.labelEntr.place(x=300,y=140)
 
         #button
-        self.greet_button = Button(master, text="Accept", command=self.accept, bg= "#1ED454").place(x=20,y=350)
-        self.close_button = Button(master, text="Fail", command=self.quit1, bg= "#E00A1D").place(x=550,y=350)
+        self.greet_button = Button(master, text="Accept", command=self.accept, bg= "#1ED454")
+        self.greet_button.place(x=20,y=350)
+        self.close_button = Button(master, text="Fail", command=self.quit1, bg= "#E00A1D")
+        self.close_button.place(x=550,y=350)
         
 
     def accept(self):
@@ -49,6 +61,10 @@ class MyFirstGUI:
     def quit1(self):
         self.attr1 = False
         self.master.quit()
+
+    def entryHandler(self, event):
+        self.master.quit()
+        
 def test():
     root = Tk()
     my_gui = MyFirstGUI(root)
