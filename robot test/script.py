@@ -58,7 +58,7 @@ class MyFirstGUI:
 
     
     def eventHandlerButton(self, event):
-        print(event.widget['text'])
+        #print(event.widget['text'])
         self.master.quit()
 
         
