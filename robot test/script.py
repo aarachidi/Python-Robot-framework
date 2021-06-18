@@ -58,43 +58,9 @@ class MyFirstGUI:
         
 def test(ar):
     root = Tk()
-    arr = [
-        {
-            'type' : 'createEntry',
-            'name' : 'variable1',
-            'x' : 40,
-            'y' : 30,
-            'max' : 10,
-            'min' : 2
-        },
-        {
-            'type' : 'createButton',
-            'name' : 'variable2',
-            'text' : 'no',
-            'x'    : 500,
-            'y'    : 300
-        },
-        {
-            'type' : 'createEntry',
-            'x' : 40,
-            'y' : 130,
-            'max' : 100,
-            'min' : 50
-        },
-        {
-            'type' : 'createImage',
-            'name'  :  'image',
-            'x' :   150,
-            'y' :   130,
-            'path' : 'easii-ic.png'
-        }
-    ] 
     my_gui = MyFirstGUI(root, ar)
     root.mainloop()
     return result
 
-#test()
 
-#arra = [1, 2]
-#tes = "test"
 #print(locals()["test"](arra))
