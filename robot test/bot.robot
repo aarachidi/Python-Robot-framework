@@ -5,10 +5,10 @@ Library           script.py
 *** Variables ***
 @{numbers}    1    2    3
 &{function1}       type=createEntry    name=variable1     x=150    y=280      max=10   min=2
-&{function5}       type=createEntry    name=variable2     x=150    y=300      max=8   min=4
 &{function2}       type=createButton    name=Bt     text=validate     x=400    y=330
 &{function3}       type=createImage     name=Img        x=300    y=10   path=easii-ic.png
 &{function4}       type=createLabel     text=Inputs    x=200    y=250
+&{function5}       type=createEntry    name=variable2     x=150    y=300      max=8   min=4
 *** Keywords ***
 Custome Dialog
     [Documentation]     This keyword make a custom dialog depending on 
