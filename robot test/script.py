@@ -11,13 +11,14 @@ class MyFirstGUI:
         master.geometry("600x400")
         self.attr1 = False
         master.title("A simple GUI")
-
-        self.label1 = Label(master, text="Enter a value in this input :")
-        self.label1.place(x=180,y=5)
         
         for i in widgetArray:
             func = getattr(MyFirstGUI, i['type'])
             func(self, **i)
+
+    def createLabel(self, text="", x="0", y="0", type=""):
+        label = Label(self.master, text=text)
+        label.place(x=int(x),y=int(y))
 
     def createEntry(self, name="", max='0', min='0', x='0', y='0', type=""):
 

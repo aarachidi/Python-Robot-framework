@@ -7,10 +7,12 @@ Library           script.py
 &{function1}       type=createEntry    name=variable1     x=40    y=30      max=10   min=2
 &{function2}       type=createEntry    name=variable2     x=140    y=130
 &{function3}       type=createImage     name=Img        x=150    y=150   path=easii-ic.png
+&{function4}       type=createLabel     text=first input    x=10    y=10
 *** Keywords ***
 Custome Dialog
     [Documentation]     This keyword make a custom dialog depending on 
-    ...                 the input.              
+    ...                 the input.
+    ...           
     ...                 The variables passed to the keyword must be dictionaries.\n
     ...                 There is three types of widgets :\n
     ...                 -----createEntry  for user's input\n
@@ -31,4 +33,4 @@ Custome Dialog
 
 *** Test Cases ***
 test Function 
-    Custome Dialog   ${function1}   ${function2}    ${function3}
+    Custome Dialog   ${function1}   ${function2}    ${function3}       ${function4}
