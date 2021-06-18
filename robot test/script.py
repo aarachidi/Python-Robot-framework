@@ -46,9 +46,9 @@ class MyFirstGUI:
         self.labelEntr.place(x=int(x) , y=int(y))
 
     def eventHandlerEntry(self, element, max, min, entry, name):
-        if(element.get() is ""):
+        if(element.get() is "" and (max != 0 or min != 0)):
             entry.configure({"background": "red"})
-        elif(max != 0 and min != 0):
+        elif(max != 0 or min != 0):
             if(int(element.get()) < min or int(element.get()) > max):
                 entry.configure({"background": "red"})
             else:
