@@ -39,6 +39,7 @@ class MyFirstGUI:
     def createButton(self, text="", name="", x='0', y='0', type=""):
         button = Button(self.master, text=text, bg= "#1ED454")
         button.place(x=int(x),y=int(y))
+        button.bind('<Button-1>', self.eventHandlerButton)
 
     def createImage(self, path="", x='0', y='0', name="", type=""):
         self.img2 = ImageTk.PhotoImage(file = path)
@@ -54,6 +55,11 @@ class MyFirstGUI:
             else:
                 entry.configure({"background": "green"})
         result[name] = element.get()
+
+    
+    def eventHandlerButton(self, event):
+        print(event.widget['text'])
+        self.master.quit()
 
         
 def test(ar):
