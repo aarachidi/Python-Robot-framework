@@ -87,7 +87,7 @@ def test(ar):
             'y' :   130,
             'path' : 'easii-ic.png'
         }
-    ]
+    ] 
     my_gui = MyFirstGUI(root, ar)
     root.mainloop()
     return result

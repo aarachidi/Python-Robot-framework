@@ -6,6 +6,7 @@ Library           script.py
 @{numbers}    1    2    3
 &{function1}       type=createEntry    name=variable1     x=40    y=30      max=10   min=2
 &{function2}       type=createEntry    name=variable2     x=140    y=130
+&{function3}       type=createImage     name=Img        x=150    y=150   path=easii-ic.png
 *** Keywords ***
 Print arguments
     [Arguments]    @{expected}
@@ -14,4 +15,4 @@ Print arguments
 
 *** Test Cases ***
 test Function 
-    Print arguments  ${function1}   ${function2}
+    Print arguments  ${function1}   ${function2}    ${function3}
