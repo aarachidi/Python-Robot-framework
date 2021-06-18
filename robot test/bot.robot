@@ -27,6 +27,10 @@ Custome Dialog
     ...                 Example :\n
     ...                 &{example3}       type=createButton(required)     name=Bt(required)        x=150    y=150   text=validate(required)\n
     ...                 Custome Dialog   ${example3}
+    ...                 -----createLabel  to insert Text\n
+    ...                 Example :\n
+    ...                 &{example4}       type=createLabel(required)     text=Text here(required)        x=150    y=150\n
+    ...                 Custome Dialog   ${example4}
     [Arguments]    @{expected}
     ${a}=   test    ${expected}
 
