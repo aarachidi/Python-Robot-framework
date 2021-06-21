@@ -3,7 +3,7 @@ from curses import textpad
 
 
 
-def print_menu(stdscr, row, index_hori):
+def print_center(stdscr, row, index_hori):
     stdscr.clear()
     h, w = stdscr.getmaxyx()
     for i in [0, 1, 2]:
@@ -33,7 +33,7 @@ def main(stdscr):
     txt.append(str('Entrez text1 : '))
     txt.append(str('Entrez text2 : '))
     txt.append(str('Entrez text3 : '))
-    print_menu(stdscr, txt, index_hori)
+    print_center(stdscr, txt, index_hori)
     while 1:
         key = stdscr.getch()
         if(chr(key) is 'q'):
@@ -50,7 +50,7 @@ def main(stdscr):
             index_vert += 1
         elif(key != curses.KEY_LEFT and key != curses.KEY_RIGHT and key != curses.KEY_UP and key != curses.KEY_DOWN):
             txt[index_vert] += chr(key)
-        print_menu(stdscr, txt, index_hori)
+        print_center(stdscr, txt, index_hori)
 
 
 
