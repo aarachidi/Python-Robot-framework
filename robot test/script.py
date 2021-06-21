@@ -26,9 +26,9 @@ class MyFirstGUI:
         entry1 = Entry(self.master, textvariable = varEntry)
         entry1.place(x=int(x),y=int(y))
         if(int(max) != 0 and int(min) != 0):
-            label1 = Label(self.master, text="min"+min)
+            label1 = Label(self.master, text="min "+min)
             label1.place(x=int(x)-40,y=int(y))
-            label1 = Label(self.master, text="max"+max)
+            label1 = Label(self.master, text="max "+max)
             label1.place(x=int(x)+130,y=int(y))
         varEntry.trace("w", lambda name, index, mode, \
             varEntry=varEntry, max=int(max), min=int(min), entry=entry1, nm=name: \
