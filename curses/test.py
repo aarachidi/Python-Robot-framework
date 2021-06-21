@@ -27,10 +27,8 @@ def main(stdscr):
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
     index = 0
     h, w = stdscr.getmaxyx()
-    txt = str()
-    stdscr.addstr(h-3, 0, "Quit")
-    stdscr.addstr(h-3, w-10, "Validate")
-    stdscr.refresh()
+    txt = str("Input : ")
+    print_menu(stdscr, txt, index)
     while 1:
         key = stdscr.getch()
         if(chr(key) is 'q'):
