@@ -24,7 +24,7 @@ def print_menu(stdscr, row, index_hori):
 
 def main(stdscr):
     # turn off cursor blinking
-    curses.curs_set(0)
+    curses.curs_set(1)
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
     index_hori = 0
     index_vert = 0
