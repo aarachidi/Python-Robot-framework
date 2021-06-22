@@ -15,12 +15,15 @@ def loadJson(path):
 
 class Table:
       
-    def __init__(self,root, data):
-        self.root = root
+    def __init__(self):
+        self.root = Tk()
         self.root.geometry("800x600")
         self.header = []
         self.gridRow = 0
         self.gridColumn = 0
+
+        #data
+        data = loadJson("data copy.json")
         #create Space
         #self.createSpace(10)
         # code for creating table
@@ -111,14 +114,10 @@ class Table:
         self.header[colum].grid(row=self.gridRow, column=colum)
         self.gridRow += 1
 
+    def show(self):
+        self.root.mainloop()
 
-  
-def test():
-    f = open('data copy.json',)
-    data = json.load(f)
-    f.close()
-    root = Tk()
-    my_gui = Table(root, data['composant'])
-    root.mainloop()
-test()
+    def getResult(self):
+        return self.result
+
    
