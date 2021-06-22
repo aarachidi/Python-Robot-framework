@@ -33,6 +33,23 @@
                     "min" : 2
                 }
             ]
+        },
+        {
+            "name" :  "P1V0_MGTAV",
+            "location":  "C11",
+            "color" :  "#ED7D00" ,
+            "mesures" : [
+                {
+                    "unit" : "Ohm",
+                    "max" : 12,
+                    "min" : 2
+                },
+                {
+                    "unit" : "tension",
+                    "max" : 100,
+                    "min" : 2
+                }
+            ]
         }
     ]
 }
