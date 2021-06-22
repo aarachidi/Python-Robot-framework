@@ -1,22 +1,22 @@
 ** Settings ***
 Documentation     How to use a custom Python Dialogs.
-Library     TestClass.py         WITH NAME    class1
+Library     EasiiDialogs.py         WITH NAME    UserMesures
 *** Variables ***
 ${numbers}    
 
 *** Keywords ***
 Label
     [Arguments]    @{expected}
-    class1.createLabel  ${expected}
+    UserMesures.createLabel  ${expected}
 Entry
     [Arguments]    @{expected}
-    class1.createEntry  @{expected}
+    UserMesures.createEntry  @{expected}
 Button
     [Arguments]    @{expected}
-    class1.createButton  @{expected}
+    UserMesures.createButton  @{expected}
 show
-    class1.show
-    ${a}=    class1.getResult
+    UserMesures.show
+    ${a}=    UserMesures.getResult
 
 *** Test Cases ***
 test Function 

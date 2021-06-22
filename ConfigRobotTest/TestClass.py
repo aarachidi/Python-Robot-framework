@@ -1,7 +1,7 @@
 from tkinter import Tk, Label, Button, Entry, Scale, HORIZONTAL, DoubleVar, StringVar
 from decimal import Decimal
 
-class TestClass(object):
+class EasiiDialogs(object):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     #ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
     def __init__(self):
