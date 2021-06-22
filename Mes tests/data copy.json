@@ -1,0 +1,38 @@
+{
+    "composant":[
+        {
+            "name" : "P0V85_VCCINT" ,
+            "location":  "C1102",
+            "color" : "#FFFF00"  ,
+            "mesures" : [
+                {
+                    "unit" : "Ohm",
+                    "max" : 10,
+                    "min" : 2
+                },
+                {
+                    "unit" : "tension",
+                    "max" : 10,
+                    "min" : 2
+                }
+            ]
+        },
+        {
+            "name" :  "P1V0_MGTAVCC_ARTIX",
+            "location":  "C1156",
+            "color" :  "#ED7D31" ,
+            "mesures" : [
+                {
+                    "unit" : "Ohm",
+                    "max" : 10,
+                    "min" : 2
+                },
+                {
+                    "unit" : "tension",
+                    "max" : 10,
+                    "min" : 2
+                }
+            ]
+        }
+    ]
+}
