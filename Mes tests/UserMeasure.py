@@ -4,17 +4,10 @@ from tkinter import *
 import json
 from decimal import Decimal
 from PIL import Image, ImageTk
-#Variable à retourner
-result = {}
 
-def loadJson(path):
-    f = open('data copy.json',)
-    data = json.load(f)
-    f.close()
-    return data
 
-class Table:
-      
+class UserMeasure(object):
+    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     def __init__(self):
         self.root = Tk()
         self.root.geometry("800x600")
@@ -23,7 +16,8 @@ class Table:
         self.gridColumn = 0
 
         #data
-        data = loadJson("data copy.json")
+        data = self.loadJson("data copy.json")
+        self.result = {}
         #create Space
         #self.createSpace(10)
         # code for creating table
@@ -64,7 +58,7 @@ class Table:
             self.gridRow += 1
 
     def writeInputs(self, data, name):
-        result[name] = {}
+        self.result[name] = {}
         for li in data:
             varV = StringVar()
             self.valV = Entry(self.root, textvariable = varV, borderwidth=1, relief="ridge", width=25)
@@ -74,7 +68,7 @@ class Table:
             varV.trace("w", lambda name, index, mode, \
             varV=varV, max=li['max'], min=li['min'], entry=self.valV, nm=name, type=li['unit']: \
                 self.eventHandlerEntry(varV, max, min, entry, nm , type))
-            result[name][li['unit']] = ""
+            self.result[name][li['unit']] = ""
 
 
 
@@ -96,7 +90,7 @@ class Table:
                 entry.configure({"background": "red"})
             else:
                 entry.configure({"background": "green"})
-        result[name][type]= element.get()  
+        self.result[name][type]= element.get()  
 
     def writeHeader(self, data, colum=0):
         li = data[0].keys()
@@ -119,5 +113,11 @@ class Table:
 
     def getResult(self):
         return self.result
+
+    def loadJson(self, path):
+        f = open(path,)
+        data = json.load(f)
+        f.close()
+        return data['composant']
 
    
