@@ -34,6 +34,17 @@ class TestClass(object):
         self.result[name] = ""
         self.y = self.y + 30
 
+    def createButton(self, text=""):
+        button = Button(self.root, text=text, bg= "#1ED454")
+        button.place(x=self.x,y=self.y)
+        button.bind('<Button-1>', self.eventHandlerButton)
+        self.y = self.y + 20
+
+    def eventHandlerButton(self, event):
+        #print(event.widget['text'])
+        self.root.quit()
+        return "ace"
+    
     def eventHandlerEntry(self, element, max, min, entry, name):
         if(element.get() is "" and (max != 0 or min != 0)):
             entry.configure({"background": "red"})
@@ -47,3 +58,5 @@ class TestClass(object):
     def show(self):
         self.root.mainloop()
 
+    def getResult(self):
+        return self.result
