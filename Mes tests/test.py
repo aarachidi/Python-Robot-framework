@@ -7,11 +7,17 @@ from PIL import Image, ImageTk
 #Variable à retourner
 result = {}
 
+def loadJson(path):
+    f = open('data copy.json',)
+    data = json.load(f)
+    f.close()
+    return data
+
 class Table:
       
     def __init__(self,root, data):
         self.root = root
-        self.root.geometry("800x800")
+        self.root.geometry("800x600")
         self.header = []
         self.gridRow = 0
         self.gridColumn = 0
@@ -22,6 +28,7 @@ class Table:
         self.createSpace(10)
         self.writeHeader(data)
         self.writeContent(data)
+        self.createButton("Validate")
     
     def createSpace(self, nbrSpace):
         for i in range(nbrSpace) :
@@ -34,8 +41,13 @@ class Table:
         self.labelEntr = Label(self.root, image=self.img2)
         self.labelEntr.place(x=0, y=0, relwidth=1, relheight=0.3)
 
-    #def createButton(self):
-
+    def createButton(self, text):
+        button = Button(self.root, text=text, bg= "#1ED454")
+        button.place(x=350,y=500)
+        button.bind('<Button-1>', self.eventHandlerButton)
+    
+    def eventHandlerButton(self, event):
+        self.root.quit()
 
     def writeContent(self, data):
         for li in data:
