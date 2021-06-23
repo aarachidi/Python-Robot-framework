@@ -128,9 +128,17 @@ class UserMeasure(object):
         self.root.mainloop()
 
     def getValidResult(self):
+        for element in list(self.validInput):
+            li = list(self.validInput[element])
+            if(len(li) == 0):
+                self.validInput.pop(element)
         return self.validInput
 
     def getInvalidResult(self):
+        for element in list(self.invalidInput):
+            li = list(self.invalidInput[element])
+            if(len(li) == 0):
+                self.invalidInput.pop(element)
         return self.invalidInput
 
     def loadJson(self, path):
