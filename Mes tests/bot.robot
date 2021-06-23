@@ -7,7 +7,8 @@ ${numbers}
 *** Keywords ***
 UserMes
     UserMesures.show
-    ${a}=  UserMesures.getResult
+    ${valide Result}=  UserMesures.getValidResult
+    ${Invalide Result}=  UserMesures.getInvalidResult
 
 *** Test Cases ***
 Do Test

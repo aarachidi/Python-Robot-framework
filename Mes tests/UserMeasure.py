@@ -19,6 +19,8 @@ class UserMeasure(object):
         data = self.loadJson("data.json")
         keys = data.keys()
         self.result = {}
+        self.invalidInput = {}
+        self.validInput = {}
 
         # code for creating table
         self.createImage("easii-ic.png")
@@ -47,6 +49,8 @@ class UserMeasure(object):
     def eventHandlerButton(self, event):
         self.root.quit()
 
+
+
     def writeContent(self, data):
         if isinstance(data, list) != True:
             print("erreur")
@@ -62,7 +66,8 @@ class UserMeasure(object):
                 self.gridRow += 1
 
     def writeInputs(self, data, name):
-        self.result[name] = {}
+        self.validInput[name] = {}
+        self.invalidInput[name] = {}
         for li in data:
             varV = StringVar()
             self.valV = Entry(self.root, textvariable = varV, borderwidth=1, relief="ridge", width=25)
@@ -72,7 +77,8 @@ class UserMeasure(object):
             varV.trace("w", lambda name, index, mode, \
             varV=varV, max=li['max'], min=li['min'], entry=self.valV, nm=name, type=li['unit']: \
                 self.eventHandlerEntry(varV, max, min, entry, nm , type))
-            self.result[name][li['unit']] = ""
+            self.validInput[name][li['unit']] = ""
+            self.invalidInput[name][li['unit']] = ""
 
 
 
@@ -92,9 +98,15 @@ class UserMeasure(object):
         elif(max != 0 or min != 0):
             if(Decimal(element.get()) < min or Decimal(element.get()) > max):
                 entry.configure({"background": "red"})
+                self.invalidInput[name][type]= element.get()
+                if type in self.validInput[name].keys():
+                    self.validInput[name].pop(type)
             else:
                 entry.configure({"background": "green"})
-        self.result[name][type]= element.get()  
+                self.validInput[name][type]= element.get()
+                if type in self.invalidInput[name].keys():
+                    self.invalidInput[name].pop(type)
+                 
 
     def writeHeader(self, data, colum=0):
         li = data[0].keys()
@@ -115,8 +127,11 @@ class UserMeasure(object):
     def show(self):
         self.root.mainloop()
 
-    def getResult(self):
-        return self.result
+    def getValidResult(self):
+        return self.validInput
+
+    def getInvalidResult(self):
+        return self.invalidInput
 
     def loadJson(self, path):
         f = open(path,)
