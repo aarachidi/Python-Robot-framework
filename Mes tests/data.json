@@ -4,7 +4,7 @@
             "name" : "P0V85_VCCINT" ,
             "location":  "C1102",
             "color" : "#FFFF00"  ,
-            "mesures" : [
+            "measures" : [
                 {
                     "unit" : "Ohm",
                     "max" : 10,
@@ -21,7 +21,7 @@
             "name" :  "P3V3",
             "location":  "C1117",
             "color" :  "#FF0000" ,
-            "mesures" : [
+            "measures" : [
                 {
                     "unit" : "Ohm",
                     "max" : 145.2,
@@ -38,7 +38,7 @@
             "name" :  "P1V0",
             "location":  "R1124",
             "color" :  "#8EAADB" ,
-            "mesures" : [
+            "measures" : [
                 {
                     "unit" : "Ohm",
                     "max" : 19.2,
@@ -55,7 +55,7 @@
             "name" :  "P1V0_MGTAVCC_ARTIX",
             "location":  "C1156",
             "color" :  "#ED7D31" ,
-            "mesures" : [
+            "measures" : [
                 {
                     "unit" : "Ohm",
                     "max" : 1200,
@@ -72,7 +72,7 @@
             "name" :  "P1V8_VAUX",
             "location":  "C1205",
             "color" :  "#00B050" ,
-            "mesures" : [
+            "measures" : [
                 {
                     "unit" : "Ohm",
                     "max" : 464.4,
@@ -89,7 +89,7 @@
             "name" :  "P0V9_MGTAVCC",
             "location":  "C1233",
             "color" :  "#7030A0" ,
-            "mesures" : [
+            "measures" : [
                 {
                     "unit" : "Ohm",
                     "max" : 144,
@@ -106,7 +106,7 @@
             "name" :  "P2V5_VPP",
             "location":  "C1209",
             "color" :  "#BF8F00" ,
-            "mesures" : [
+            "measures" : [
                 {
                     "unit" : "Ohm",
                     "max" : 10000000,
@@ -123,7 +123,7 @@
             "name" :  "P1V2_VDD",
             "location":  "C1220",
             "color" :  "#BFBFBF" ,
-            "mesures" : [
+            "measures" : [
                 {
                     "unit" : "Ohm",
                     "max" : 45.6,
@@ -140,7 +140,7 @@
             "name" :  "RDIMM_VREFCA",
             "location":  "C1230",
             "color" :  "#BDD6EE" ,
-            "mesures" : [
+            "measures" : [
                 {
                     "unit" : "Ohm",
                     "max" : 10000000,
@@ -159,7 +159,7 @@
             "name" : "P0V85_MGTRAVCC" ,
             "location":  "C1240",
             "color" : "#ED7D31"  ,
-            "mesures" : [
+            "measures" : [
                 {
                     "unit" : "Ohm",
                     "max" : 1170,
@@ -176,7 +176,7 @@
             "name" : "P2V5" ,
             "location":  "C1204",
             "color" : "#92D050"  ,
-            "mesures" : [
+            "measures" : [
                 {
                     "unit" : "Ohm",
                     "max" : 1020,
@@ -193,7 +193,7 @@
             "name" : "P1V2_AVTT" ,
             "location":  "C1235",
             "color" : "#FFFF00"  ,
-            "mesures" : [
+            "measures" : [
                 {
                     "unit" : "Ohm",
                     "max" : 3600,
@@ -210,7 +210,7 @@
             "name" : "P1V8_MGTRAVTT" ,
             "location":  "C1242",
             "color" : "#0070C0"  ,
-            "mesures" : [
+            "measures" : [
                 {
                     "unit" : "Ohm",
                     "max" : 800,
@@ -227,7 +227,7 @@
             "name" : "P3V3_PCIeSW" ,
             "location":  "C1135",
             "color" : "#7030A0"  ,
-            "mesures" : [
+            "measures" : [
                 {
                     "unit" : "Ohm",
                     "max" : 6600,
