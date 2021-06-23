@@ -10,9 +10,9 @@ UserMes
     ${valid Result}=  UserMesures.getValidResult
     ${Invalid Result}=  UserMesures.getInvalidResult
     Run Keyword And Continue On Failure    Should Be Empty     ${Invalid Result}
-    FOR    ${key}     IN    @{valid Result}
-    FOR     ${key1}      IN      @{valid Result}[${key}]
-    Log     The current key is: ${valid Result}[${key}][${key1}]
+    FOR    ${key}     IN    @{Invalid Result}
+    FOR     ${key1}      IN      @{Invalid Result}[${key}]
+    Log     The current key is: ${Invalid Result}[${key}][${key1}]
     END
     END
 
