@@ -8,12 +8,46 @@
                 {
                     "unit" : "Ohm",
                     "max" : 10,
-                    "min" : 2
+                    "min" : 0.88
                 },
                 {
                     "unit" : "tension",
-                    "max" : 10,
-                    "min" : 2
+                    "max" : 0.8925,
+                    "min" : 0.8075
+                }
+            ]
+        },
+        {
+            "name" :  "P3V3",
+            "location":  "C1117",
+            "color" :  "#FF0000" ,
+            "mesures" : [
+                {
+                    "unit" : "Ohm",
+                    "max" : 145.2,
+                    "min" : 96.8
+                },
+                {
+                    "unit" : "tension",
+                    "max" : 3.465,
+                    "min" : 3.135
+                }
+            ]
+        },
+        {
+            "name" :  "P1V0",
+            "location":  "R1124",
+            "color" :  "#8EAADB" ,
+            "mesures" : [
+                {
+                    "unit" : "Ohm",
+                    "max" : 19.2,
+                    "min" : 12.8
+                },
+                {
+                    "unit" : "tension",
+                    "max" : 1.05,
+                    "min" : 0.95
                 }
             ]
         },
@@ -24,30 +58,98 @@
             "mesures" : [
                 {
                     "unit" : "Ohm",
-                    "max" : 10,
-                    "min" : 2
+                    "max" : 1200,
+                    "min" : 800
                 },
                 {
                     "unit" : "tension",
-                    "max" : 10,
-                    "min" : 2
+                    "max" : 1.05,
+                    "min" : 0.95
                 }
             ]
         },
         {
-            "name" :  "P1V0_MGTAV",
-            "location":  "C11",
-            "color" :  "#ED7D00" ,
+            "name" :  "P1V8_VAUX",
+            "location":  "C1205",
+            "color" :  "#00B050" ,
             "mesures" : [
                 {
                     "unit" : "Ohm",
-                    "max" : 12,
-                    "min" : 2
+                    "max" : 464.4,
+                    "min" : 309.6
                 },
                 {
                     "unit" : "tension",
-                    "max" : 100,
-                    "min" : 2
+                    "max" : 1.89,
+                    "min" : 1.71
+                }
+            ]
+        },
+        {
+            "name" :  "P0V9_MGTAVCC",
+            "location":  "C1233",
+            "color" :  "#7030A0" ,
+            "mesures" : [
+                {
+                    "unit" : "Ohm",
+                    "max" : 144,
+                    "min" : 96
+                },
+                {
+                    "unit" : "tension",
+                    "max" : 0.945,
+                    "min" : 0.855
+                }
+            ]
+        },
+        {
+            "name" :  "P2V5_VPP",
+            "location":  "C1209",
+            "color" :  "#BF8F00" ,
+            "mesures" : [
+                {
+                    "unit" : "Ohm",
+                    "max" : 10000000,
+                    "min" : 4000
+                },
+                {
+                    "unit" : "tension",
+                    "max" : 2.625,
+                    "min" : 2.375
+                }
+            ]
+        },
+        {
+            "name" :  "P1V2_VDD",
+            "location":  "C1220",
+            "color" :  "#BFBFBF" ,
+            "mesures" : [
+                {
+                    "unit" : "Ohm",
+                    "max" : 45.6,
+                    "min" : 30.4
+                },
+                {
+                    "unit" : "tension",
+                    "max" : 1.26,
+                    "min" : 1.14
+                }
+            ]
+        },
+        {
+            "name" :  "RDIMM_VREFCA",
+            "location":  "C1230",
+            "color" :  "#BFBFBF" ,
+            "mesures" : [
+                {
+                    "unit" : "Ohm",
+                    "max" : 10000000,
+                    "min" : 4000
+                },
+                {
+                    "unit" : "tension",
+                    "max" : 0.63,
+                    "min" : 0.57
                 }
             ]
         }

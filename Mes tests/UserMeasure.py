@@ -2,7 +2,6 @@
    
 from tkinter import *
 import json
-from decimal import Decimal
 from PIL import Image, ImageTk
 
 
@@ -96,7 +95,7 @@ class UserMeasure(object):
         if(element.get() is "" and (max != 0 or min != 0)):
             entry.configure({"background": "red"})
         elif(max != 0 or min != 0):
-            if(Decimal(element.get()) < min or Decimal(element.get()) > max):
+            if(float(element.get()) < min or float(element.get()) > max):
                 entry.configure({"background": "red"})
                 self.invalidInput[name][type]= element.get()
                 if type in self.validInput[name].keys():
