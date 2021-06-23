@@ -11,7 +11,9 @@ UserMes
     ${Invalid Result}=  UserMesures.getInvalidResult
     Run Keyword And Continue On Failure    Should Be Empty     ${Invalid Result}
     FOR    ${key}     IN    @{valid Result}
-    Log     The current key is: ${key}
+    FOR     ${key1}      IN      @{valid Result}[${key}]
+    Log     The current key is: ${key1}
+    END
     END
 
 *** Test Cases ***
