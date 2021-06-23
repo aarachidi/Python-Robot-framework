@@ -139,7 +139,7 @@
         {
             "name" :  "RDIMM_VREFCA",
             "location":  "C1230",
-            "color" :  "#BFBFBF" ,
+            "color" :  "#BDD6EE" ,
             "mesures" : [
                 {
                     "unit" : "Ohm",
@@ -156,19 +156,87 @@
     ],
     "soudure":[
         {
-            "name" : "P0V85_VCCT" ,
-            "location":  "L234",
-            "color" : "#FFEF00"  ,
+            "name" : "P0V85_MGTRAVCC" ,
+            "location":  "C1240",
+            "color" : "#ED7D31"  ,
             "mesures" : [
                 {
                     "unit" : "Ohm",
-                    "max" : 2,
-                    "min" : 1
+                    "max" : 1170,
+                    "min" : 780
                 },
                 {
                     "unit" : "tension",
-                    "max" : 3,
-                    "min" : -1
+                    "max" : 0.8925,
+                    "min" : 0.8075
+                }
+            ]
+        },
+        {
+            "name" : "P2V5" ,
+            "location":  "C1204",
+            "color" : "#92D050"  ,
+            "mesures" : [
+                {
+                    "unit" : "Ohm",
+                    "max" : 1020,
+                    "min" : 680
+                },
+                {
+                    "unit" : "tension",
+                    "max" : 2.625,
+                    "min" : 2.375
+                }
+            ]
+        },
+        {
+            "name" : "P1V2_AVTT" ,
+            "location":  "C1235",
+            "color" : "#FFFF00"  ,
+            "mesures" : [
+                {
+                    "unit" : "Ohm",
+                    "max" : 3600,
+                    "min" : 2400
+                },
+                {
+                    "unit" : "tension",
+                    "max" : 1.26,
+                    "min" : 1.14
+                }
+            ]
+        },
+        {
+            "name" : "P1V8_MGTRAVTT" ,
+            "location":  "C1242",
+            "color" : "#0070C0"  ,
+            "mesures" : [
+                {
+                    "unit" : "Ohm",
+                    "max" : 800,
+                    "min" : 1200
+                },
+                {
+                    "unit" : "tension",
+                    "max" : 1.89,
+                    "min" : 1.71
+                }
+            ]
+        },
+        {
+            "name" : "P3V3_PCIeSW" ,
+            "location":  "C1135",
+            "color" : "#7030A0"  ,
+            "mesures" : [
+                {
+                    "unit" : "Ohm",
+                    "max" : 6600,
+                    "min" : 4400
+                },
+                {
+                    "unit" : "tension",
+                    "max" : 3.465,
+                    "min" : 3.135
                 }
             ]
         }
