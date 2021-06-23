@@ -120,8 +120,6 @@ class UserMeasure(object):
                 self.header.append(Label(self.root, text=element, borderwidth=1, relief="ridge", width=20))
                 self.header[colum].grid(row=self.gridRow, column=colum)
                 colum += 1
-        self.header.append(Label(self.root, text="Résult", borderwidth=1, relief="ridge", width=20))
-        self.header[colum].grid(row=self.gridRow, column=colum)
         self.gridRow += 1
 
     def show(self):
