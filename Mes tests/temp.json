@@ -1,0 +1,67 @@
+{
+    "composant":[
+        {
+            "name" : "P0V85_VCCINT" ,
+            "location":  "C1102",
+            "color" : "#FFFF00"  ,
+            "ValueOhm" : 1.1,
+            "ValueT" : 0.85
+        },
+        {
+            "name" :  "P1V0_MGTAVCC_ARTIX",
+            "location":  "C1156",
+            "color" :  "#ED7D31" ,
+            "ValueOhm" : 1000,
+            "ValueT" : 1
+        },
+        {
+            "name" :  "P1V8_VAUX",
+            "location": "C1205" ,
+            "color" :  "#00B050" ,
+            "ValueOhm" : 387,
+            "ValueT" : 1.8
+        },
+        {
+            "name" :  "P0V9_MGTAVCC",
+            "location":  "C1233",
+            "color" :  "#7030A0" ,
+            "ValueOhm" : 120,
+            "ValueT" : 0.9
+        },
+        {
+            "name" : "P2V5_VPP" ,
+            "location": "C1209" ,
+            "color" :  "#BF8F00" ,
+            "ValueOhm" : 4000,
+            "ValueT" : 2.5
+        },
+        {
+            "name" : "P1V2_VDD" ,
+            "location": "C1220" ,
+            "color" :  "#BFBFBF" ,
+            "ValueOhm" : 38,
+            "ValueT" : 1.2
+        },
+        {
+            "name": "P3V3",
+            "location": "C1117",
+            "color" :  "#FF0000" ,
+            "ValueOhm" : 121,
+            "ValueT" : 3.3
+        },
+        {
+            "name": "P1V0",
+            "location":"R1124",
+            "color" :  "#8EAADB" ,
+            "ValueOhm" : 16,
+            "ValueT" : 1
+        },
+        {
+            "name": "RDIMM_VREFCA",
+            "location":"C1230",
+            "color" :  "#BDD6EE" ,
+            "ValueOhm" : 4000,
+            "ValueT" : 0.6
+        }
+    ]
+}

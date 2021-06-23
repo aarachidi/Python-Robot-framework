@@ -16,15 +16,16 @@ class UserMeasure(object):
         self.gridColumn = 0
 
         #data
-        data = self.loadJson("data copy.json")
+        data = self.loadJson("data.json")
+        keys = data.keys()
         self.result = {}
-        #create Space
-        #self.createSpace(10)
+
         # code for creating table
         self.createImage("easii-ic.png")
         self.createSpace(10)
-        self.writeHeader(data)
-        self.writeContent(data)
+        self.writeHeader(data[list(keys)[0]])
+        for key in keys:
+            self.writeContent(data[key])
         self.createButton("Validate")
     
     def createSpace(self, nbrSpace):
@@ -47,15 +48,18 @@ class UserMeasure(object):
         self.root.quit()
 
     def writeContent(self, data):
-        for li in data:
-            keys = li.keys()
-            self.gridColumn = 0
-            for key in keys:
-                if(isinstance(li[key], list)):
-                    self.writeInputs(li[key], li['name'])
-                else:
-                    self.writeLabels(key, li)
-            self.gridRow += 1
+        if isinstance(data, list) != True:
+            print("erreur")
+        else:
+            for li in data:
+                keys = li.keys()
+                self.gridColumn = 0
+                for key in keys:
+                    if(isinstance(li[key], list)):
+                        self.writeInputs(li[key], li['name'])
+                    else:
+                        self.writeLabels(key, li)
+                self.gridRow += 1
 
     def writeInputs(self, data, name):
         self.result[name] = {}
@@ -118,6 +122,4 @@ class UserMeasure(object):
         f = open(path,)
         data = json.load(f)
         f.close()
-        return data['composant']
-
-   
+        return data
