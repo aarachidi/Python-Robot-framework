@@ -34,14 +34,14 @@ class EasiiDialogs(object):
         self.result[name] = ""
         self.y = self.y + 30
 
-    def createEntry2(self, name="", regixExpress=""):
+    def createEntryWithRegix(self, name="", regixExpress=""):
 
         varEntry = StringVar()
         entry1 = Entry(self.root, textvariable = varEntry)
         entry1.place(x=self.x,y=self.y)
         varEntry.trace("w", lambda name, index, mode, \
             varEntry=varEntry,  entry=entry1, nm=name, regixExp=regixExpress: \
-                self.eventHandlerEntry2(varEntry, entry, nm , regixExp))
+                self.eventHandlerEntryWithRegix(varEntry, entry, nm , regixExp))
         self.result[name] = ""
         self.y = self.y + 30
 
@@ -66,7 +66,7 @@ class EasiiDialogs(object):
                 entry.configure({"background": "green"})
         self.result[name] = element.get()
 
-    def eventHandlerEntry2(self, element, entry, name, regixExp):
+    def eventHandlerEntryWithRegix(self, element, entry, name, regixExp):
         x = re.search(regixExp, element.get())
         if x:
             entry.configure({"background": "green"})

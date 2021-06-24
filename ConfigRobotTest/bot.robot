@@ -13,7 +13,7 @@ Entry
     UserMesures.createEntry  @{expected}
 Entry with regix Expression
     [Arguments]    @{expected}
-    UserMesures.createEntry2  @{expected}
+    UserMesures.createEntryWithRegix  @{expected}
 Button
     [Arguments]    @{expected}
     UserMesures.createButton  @{expected}
@@ -23,9 +23,6 @@ show
 
 *** Test Cases ***
 test Function 
-    Label  achraf
-    Label   Oussama
-    Entry  a   10    2
-    Entry with regix Expression     b    ^te.*
+    Entry with regix Expression     b    ^start.*end
     Button  validate
     show
