@@ -9,9 +9,9 @@ class UserMeasure(object):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     def __init__(self):
         self.root = Tk()
-        self.root.geometry("800x600")
+        self.root.geometry("+250+50")
         self.header = []
-        self.gridRow = 0
+        self.gridRow = 10
         self.gridColumn = 0
 
         #data
@@ -23,15 +23,25 @@ class UserMeasure(object):
 
         # code for creating table
         self.createImage("easii-ic.png")
-        self.createSpace(10)
         self.writeHeader(data[list(keys)[0]])
         for key in keys:
             self.writeContent(data[key])
+        self.createSpace(1)
         self.createButton("Validate")
+        self.createSpace(2)
+
+
+        col_count, row_count = self.root.grid_size()
+
+        for col in range(col_count):
+            self.root.grid_columnconfigure(col, minsize=20)
+
+        for row in range(row_count):
+            self.root.grid_rowconfigure(row, minsize=20)
     
     def createSpace(self, nbrSpace):
         for i in range(nbrSpace) :
-            lb = Label(self.root, text=" ")
+            lb = Label(self.root, text="\n")
             lb.grid(row=i, column=0)
             self.gridRow += 1
 
@@ -42,7 +52,7 @@ class UserMeasure(object):
 
     def createButton(self, text):
         button = Button(self.root, text=text, bg= "#1ED454")
-        button.place(x=350,y=500)
+        button.grid(row=self.gridRow, column=2)
         button.bind('<Button-1>', self.eventHandlerButton)
     
     def eventHandlerButton(self, event):
@@ -71,6 +81,10 @@ class UserMeasure(object):
             varV = StringVar()
             self.valV = Entry(self.root, textvariable = varV, borderwidth=1, relief="ridge", width=25)
             self.valV.grid(row=self.gridRow, column=self.gridColumn)
+            self.gridColumn += 1
+            
+            lb = Label(self.root, text=li['unit'], borderwidth=1, relief="ridge", width=15)
+            lb.grid(row=self.gridRow, column=self.gridColumn)
             self.gridColumn += 1
 
             varV.trace("w", lambda name, index, mode, \
@@ -110,12 +124,7 @@ class UserMeasure(object):
     def writeHeader(self, data, colum=0):
         li = data[0].keys()
         for element in li:
-            if isinstance(data[0][element], list):
-                for dt in data[0][element]:
-                    self.header.append(Label(self.root, text=dt["unit"], borderwidth=1, relief="ridge", width=20))
-                    self.header[colum].grid(row=self.gridRow, column=colum)
-                    colum += 1
-            elif element != "color":
+            if not isinstance(data[0][element], list) and element != "color":
                 self.header.append(Label(self.root, text=element, borderwidth=1, relief="ridge", width=20))
                 self.header[colum].grid(row=self.gridRow, column=colum)
                 colum += 1
