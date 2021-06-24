@@ -11,7 +11,7 @@
                     "min" : 0.88
                 },
                 {
-                    "unit" : "tension",
+                    "unit" : "tension (V)",
                     "max" : 0.8925,
                     "min" : 0.8075
                 }
@@ -28,7 +28,7 @@
                     "min" : 96.8
                 },
                 {
-                    "unit" : "tension",
+                    "unit" : "tension (V)",
                     "max" : 3.465,
                     "min" : 3.135
                 }
@@ -45,7 +45,7 @@
                     "min" : 12.8
                 },
                 {
-                    "unit" : "tension",
+                    "unit" : "tension (V)",
                     "max" : 1.05,
                     "min" : 0.95
                 }
@@ -62,7 +62,7 @@
                     "min" : 800
                 },
                 {
-                    "unit" : "tension",
+                    "unit" : "tension (V)",
                     "max" : 1.05,
                     "min" : 0.95
                 }
@@ -79,7 +79,7 @@
                     "min" : 309.6
                 },
                 {
-                    "unit" : "tension",
+                    "unit" : "tension (V)",
                     "max" : 1.89,
                     "min" : 1.71
                 }
@@ -96,7 +96,7 @@
                     "min" : 96
                 },
                 {
-                    "unit" : "tension",
+                    "unit" : "tension (V)",
                     "max" : 0.945,
                     "min" : 0.855
                 }
@@ -113,7 +113,7 @@
                     "min" : 4000
                 },
                 {
-                    "unit" : "tension",
+                    "unit" : "tension (V)",
                     "max" : 2.625,
                     "min" : 2.375
                 }
@@ -130,7 +130,7 @@
                     "min" : 30.4
                 },
                 {
-                    "unit" : "tension",
+                    "unit" : "tension (V)",
                     "max" : 1.26,
                     "min" : 1.14
                 }
@@ -147,7 +147,7 @@
                     "min" : 4000
                 },
                 {
-                    "unit" : "tension",
+                    "unit" : "tension (V)",
                     "max" : 0.63,
                     "min" : 0.57
                 }
@@ -166,7 +166,7 @@
                     "min" : 780
                 },
                 {
-                    "unit" : "tension",
+                    "unit" : "tension (V)",
                     "max" : 0.8925,
                     "min" : 0.8075
                 }
@@ -183,7 +183,7 @@
                     "min" : 680
                 },
                 {
-                    "unit" : "tension",
+                    "unit" : "tension (V)",
                     "max" : 2.625,
                     "min" : 2.375
                 }
@@ -200,7 +200,7 @@
                     "min" : 2400
                 },
                 {
-                    "unit" : "tension",
+                    "unit" : "tension (V)",
                     "max" : 1.26,
                     "min" : 1.14
                 }
@@ -217,7 +217,7 @@
                     "min" : 1200
                 },
                 {
-                    "unit" : "tension",
+                    "unit" : "tension (V)",
                     "max" : 1.89,
                     "min" : 1.71
                 }
@@ -234,7 +234,7 @@
                     "min" : 4400
                 },
                 {
-                    "unit" : "tension",
+                    "unit" : "tension (V)",
                     "max" : 3.465,
                     "min" : 3.135
                 }
