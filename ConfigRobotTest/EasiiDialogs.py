@@ -1,5 +1,4 @@
 from tkinter import Tk, Label, Button, Entry, Scale, HORIZONTAL, DoubleVar, StringVar
-from decimal import Decimal
 
 class EasiiDialogs(object):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
@@ -23,7 +22,7 @@ class EasiiDialogs(object):
         varEntry = StringVar()
         entry1 = Entry(self.root, textvariable = varEntry)
         entry1.place(x=self.x,y=self.y)
-        if(Decimal(max) != 0 and Decimal(min) != 0):
+        if(float(max) != 0 or float(min) != 0):
             label1 = Label(self.root, text="min "+min)
             label1.place(x=self.x-40,y=self.y)
             label1 = Label(self.root, text="max "+max)
@@ -49,7 +48,7 @@ class EasiiDialogs(object):
         if(element.get() is "" and (max != 0 or min != 0)):
             entry.configure({"background": "red"})
         elif(max != 0 or min != 0):
-            if(Decimal(element.get()) < min or Decimal(element.get()) > max):
+            if(float(element.get()) < min or float(element.get()) > max):
                 entry.configure({"background": "red"})
             else:
                 entry.configure({"background": "green"})
