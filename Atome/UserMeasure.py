@@ -20,6 +20,8 @@ class UserMeasure(object):
         self.result = {}
         self.invalidInput = {}
         self.validInput = {}
+        self.MaxValues = {}
+        self.MinValues = {}
 
         # code for creating table
         self.createImage("easii-ic.png")
@@ -77,6 +79,8 @@ class UserMeasure(object):
     def writeInputs(self, data, name):
         self.validInput[name] = {}
         self.invalidInput[name] = {}
+        self.MaxValues[name] = {}
+        self.MinValues[name] = {}
         for li in data:
             varV = StringVar()
             self.valV = Entry(self.root, textvariable = varV, borderwidth=1, relief="ridge", width=25)
@@ -92,6 +96,8 @@ class UserMeasure(object):
                 self.eventHandlerEntry(varV, max, min, entry, nm , type))
             self.validInput[name][li['unit']] = ""
             self.invalidInput[name][li['unit']] = ""
+            self.MaxValues[name][li['unit']] = li['max']
+            self.MinValues[name][li['unit']] = li['min']
 
 
 
@@ -146,6 +152,12 @@ class UserMeasure(object):
             if(len(li) == 0):
                 self.invalidInput.pop(element)
         return self.invalidInput
+
+    def getMaxValues(self):
+        return self.MaxValues
+
+    def getMinValues(self):
+        return self.MinValues
 
     def loadJson(self, path):
         f = open(path,)
