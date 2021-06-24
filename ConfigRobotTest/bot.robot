@@ -11,6 +11,9 @@ Label
 Entry
     [Arguments]    @{expected}
     UserMesures.createEntry  @{expected}
+Entry with regix Expression
+    [Arguments]    @{expected}
+    UserMesures.createEntry2  @{expected}
 Button
     [Arguments]    @{expected}
     UserMesures.createButton  @{expected}
@@ -23,5 +26,6 @@ test Function
     Label  achraf
     Label   Oussama
     Entry  a   10    2
+    Entry with regix Expression     b    ^te.*
     Button  validate
     show

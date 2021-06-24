@@ -1,4 +1,5 @@
 from tkinter import Tk, Label, Button, Entry, Scale, HORIZONTAL, DoubleVar, StringVar
+import re
 
 class EasiiDialogs(object):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
@@ -33,6 +34,17 @@ class EasiiDialogs(object):
         self.result[name] = ""
         self.y = self.y + 30
 
+    def createEntry2(self, name="", regixExpress=""):
+
+        varEntry = StringVar()
+        entry1 = Entry(self.root, textvariable = varEntry)
+        entry1.place(x=self.x,y=self.y)
+        varEntry.trace("w", lambda name, index, mode, \
+            varEntry=varEntry,  entry=entry1, nm=name, regixExp=regixExpress: \
+                self.eventHandlerEntry2(varEntry, entry, nm , regixExp))
+        self.result[name] = ""
+        self.y = self.y + 30
+
     def createButton(self, text=""):
         button = Button(self.root, text=text, bg= "#1ED454")
         button.place(x=self.x,y=self.y)
@@ -52,6 +64,14 @@ class EasiiDialogs(object):
                 entry.configure({"background": "red"})
             else:
                 entry.configure({"background": "green"})
+        self.result[name] = element.get()
+
+    def eventHandlerEntry2(self, element, entry, name, regixExp):
+        x = re.search(regixExp, element.get())
+        if x:
+            entry.configure({"background": "green"})
+        else:
+            entry.configure({"background": "red"})
         self.result[name] = element.get()
 
     def show(self):
