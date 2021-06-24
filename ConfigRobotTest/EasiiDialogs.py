@@ -11,7 +11,7 @@ class EasiiDialogs(object):
         self.root = Tk()
         self.x = 100
         self.y = 10
-        self.root.geometry("600x400")
+        self.root.geometry("300x300")
     
     def createLabel(self, text=""):
         label = Label(self.root, text=text)
