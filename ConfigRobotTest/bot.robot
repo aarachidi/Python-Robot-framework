@@ -23,6 +23,6 @@ show
 
 *** Test Cases ***
 test Function 
-    Entry with regix Expression     b    ^start.*end
+    Entry with regix Expression    b    start.$
     Button  validate
     show
