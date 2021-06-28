@@ -112,7 +112,7 @@ class EasiiDialogs(object):
             entry.configure({"background": "white"})
         self.result[name] = element.get()
 
-    def show(self):
+    def show(self, name):
         #Create button if not existe
         if self.buttonExiste == False:
             self.createButton("Validate")
@@ -123,6 +123,7 @@ class EasiiDialogs(object):
 
         for row in range(row_count):
             self.root.grid_rowconfigure(row, minsize=20)
+        self.root.title(name)
         self.root.mainloop()
 
     def getResult(self):

@@ -19,8 +19,9 @@ Button
     [Arguments]    @{expected}
     UserMesures.createButton  @{expected}
 show
-    UserMesures.show
-    ${a}=    UserMesures.getResult
+    [Arguments]      @{expected}
+    UserMesures.show        @{expected}
+    ${a}=    UserMesures.getResult     
 
 *** Test Cases ***
 test Function 
@@ -29,5 +30,4 @@ test Function
     Entry       input1     17      12    
     Entry       input2      
     Entry with regex Expression        input3      ^start
-    Button    valide
-    show
+    show        Main Interface
