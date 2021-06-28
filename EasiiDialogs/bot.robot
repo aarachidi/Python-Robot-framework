@@ -1,6 +1,7 @@
 ** Settings ***
 Documentation     How to use a custom Python Dialogs.
 Library     EasiiDialogs.py         WITH NAME    UserMesures
+Metadata         --name    Dialogs
 *** Variables ***
 ${numbers}    
 
@@ -11,9 +12,9 @@ Label
 Entry
     [Arguments]    @{expected}
     UserMesures.createEntry  @{expected}
-Entry with regix Expression
+Entry with regex Expression
     [Arguments]    @{expected}
-    UserMesures.createEntryWithRegix  @{expected}
+    UserMesures.createEntryWithRegex  @{expected}
 Button
     [Arguments]    @{expected}
     UserMesures.createButton  @{expected}
@@ -23,6 +24,7 @@ show
 
 *** Test Cases ***
 test Function 
-    Entry with regix Expression    b    start.$
+    Entry    test    3   4
+    Entry with regex Expression    b    start.$
     Button  validate
     show

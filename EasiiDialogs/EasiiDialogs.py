@@ -12,6 +12,8 @@ class EasiiDialogs(object):
         self.x = 100
         self.y = 10
         self.root.geometry("300x300")
+        #Set interface in front
+        self.root.attributes("-topmost", True)
     
     def createLabel(self, text=""):
         label = Label(self.root, text=text)
