@@ -1,5 +1,6 @@
 from tkinter import Tk, Label, Button, Entry, Scale, HORIZONTAL, DoubleVar, StringVar
 import re
+from tkinter.constants import TRUE
 
 class EasiiDialogs(object):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
@@ -11,6 +12,7 @@ class EasiiDialogs(object):
         self.root = Tk()
         self.gridRow = 4
         self.gridColumn = 0
+        self.buttonExiste = False
         #Set interface in front
         self.root.attributes("-topmost", True)
 
@@ -24,7 +26,7 @@ class EasiiDialogs(object):
     def createSpace(self, nbrSpace):
         for i in range(nbrSpace) :
             lb = Label(self.root, text="\n")
-            lb.grid(row=self.gridRow, column=7)
+            lb.grid(row=self.gridRow, column=8)
             self.gridRow += 1
 
     
@@ -73,16 +75,17 @@ class EasiiDialogs(object):
         entry1 = Entry(self.root, textvariable = varEntry)
         entry1.grid(row=self.gridRow, column=3)
         varEntry.trace("w", lambda name, index, mode, \
-            varEntry=varEntry,  entry=entry1, nm=name + " : ", RegexExp=RegexExpress: \
+            varEntry=varEntry,  entry=entry1, nm=name, RegexExp=RegexExpress: \
                 self.eventHandlerEntryWithRegex(varEntry, entry, nm , RegexExp))
         self.result[name] = ""
         self.gridRow += 1
 
     def createButton(self, text=""):
         button = Button(self.root, text=text, bg= "#1ED454")
-        button.place(x=self.x,y=self.y)
+        button.grid(row=self.gridRow + 3, column=3)
         button.bind('<Button-1>', self.eventHandlerButton)
-        self.y = self.y + 20
+        self.buttonExiste = TRUE
+        self.gridRow += 3
 
     def eventHandlerButton(self, event):
         #print(event.widget['text'])
@@ -108,6 +111,9 @@ class EasiiDialogs(object):
         self.result[name] = element.get()
 
     def show(self):
+        #Create button if not existe
+        if self.buttonExiste == False:
+            self.createButton("Validate")
         self.createSpace(5)
         col_count, row_count = self.root.grid_size()
         for col in range(col_count):
