@@ -8,7 +8,7 @@ ${numbers}
 *** Keywords ***
 Label
     [Arguments]    @{expected}
-    UserMesures.createLabel  ${expected}
+    UserMesures.createLabel  @{expected}
 Entry
     [Arguments]    @{expected}
     UserMesures.createEntry  @{expected}
@@ -24,7 +24,8 @@ show
 
 *** Test Cases ***
 test Function 
-    Entry    test    3   4
-    Entry with regex Expression    b    start.$
-    Button  validate
+    Label    name:        achraf
+    Label    mot de passe
+    Entry       input1     17      12
+    Entry       input2
     show
