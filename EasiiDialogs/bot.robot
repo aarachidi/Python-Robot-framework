@@ -26,8 +26,8 @@ show
 test Function 
     Label    name:        achraf
     Label    mot de passe
-    Entry       input1     17      12
-    Entry       input2
+    Entry       input1     17      12    
+    Entry       input2      
     Entry with regex Expression        input3      ^start
     Button    valide
     show

@@ -42,9 +42,9 @@ class EasiiDialogs(object):
         self.gridRow += 1
         
 
-    def createEntry(self, name="", max='0', min='0'):
+    def createEntry(self, name="", max='0', min='0', default="0"):
 
-        varEntry = StringVar()
+        varEntry = StringVar(value=default)
         entry1 = Entry(self.root, textvariable = varEntry)
         entry1.grid(row=self.gridRow, column=3)
 
@@ -93,8 +93,8 @@ class EasiiDialogs(object):
         return "ace"
     
     def eventHandlerEntry(self, element, max, min, entry, name):
-        if((element.get() == "") and (max != 0 or min != 0)):
-            entry.configure({"background": "red"})
+        if((element.get() == "")):
+            entry.configure({"background": "white"})
         elif(max != 0 or min != 0):
             if(float(element.get()) < min or float(element.get()) > max):
                 entry.configure({"background": "red"})
@@ -108,6 +108,8 @@ class EasiiDialogs(object):
             entry.configure({"background": "green"})
         else:
             entry.configure({"background": "red"})
+        if(element.get() == ""):
+            entry.configure({"background": "white"})
         self.result[name] = element.get()
 
     def show(self):
