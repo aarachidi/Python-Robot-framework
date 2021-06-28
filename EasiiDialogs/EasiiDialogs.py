@@ -23,10 +23,21 @@ class EasiiDialogs(object):
         varEntry = StringVar()
         entry1 = Entry(self.root, textvariable = varEntry)
         entry1.place(x=self.x,y=self.y)
-        if(float(max) != 0 or float(min) != 0):
-            label1 = Label(self.root, text="min "+min)
+
+        if isinstance(min , float) :
+            min = float(min)
+        else :
+            min = int(min)
+
+        if isinstance(max , float) :
+            max = float(max)
+        else :
+            max = int(max)
+
+        if(max != 0 or min != 0):
+            label1 = Label(self.root, text=str(min))
             label1.place(x=self.x-40,y=self.y)
-            label1 = Label(self.root, text="max "+max)
+            label1 = Label(self.root, text=str(max))
             label1.place(x=self.x+130,y=self.y)
         varEntry.trace("w", lambda name, index, mode, \
             varEntry=varEntry, max=int(max), min=int(min), entry=entry1, nm=name: \
@@ -34,14 +45,14 @@ class EasiiDialogs(object):
         self.result[name] = ""
         self.y = self.y + 30
 
-    def createEntryWithRegix(self, name="", regixExpress=""):
+    def createEntryWithRegex(self, name="", RegexExpress=""):
 
         varEntry = StringVar()
         entry1 = Entry(self.root, textvariable = varEntry)
         entry1.place(x=self.x,y=self.y)
         varEntry.trace("w", lambda name, index, mode, \
-            varEntry=varEntry,  entry=entry1, nm=name, regixExp=regixExpress: \
-                self.eventHandlerEntryWithRegix(varEntry, entry, nm , regixExp))
+            varEntry=varEntry,  entry=entry1, nm=name + " : ", RegexExp=RegexExpress: \
+                self.eventHandlerEntryWithRegex(varEntry, entry, nm , RegexExp))
         self.result[name] = ""
         self.y = self.y + 30
 
@@ -57,7 +68,7 @@ class EasiiDialogs(object):
         return "ace"
     
     def eventHandlerEntry(self, element, max, min, entry, name):
-        if(element.get() is "" and (max != 0 or min != 0)):
+        if((element.get() == "") and (max != 0 or min != 0)):
             entry.configure({"background": "red"})
         elif(max != 0 or min != 0):
             if(float(element.get()) < min or float(element.get()) > max):
@@ -66,8 +77,8 @@ class EasiiDialogs(object):
                 entry.configure({"background": "green"})
         self.result[name] = element.get()
 
-    def eventHandlerEntryWithRegix(self, element, entry, name, regixExp):
-        x = re.search(regixExp, element.get())
+    def eventHandlerEntryWithRegex(self, element, entry, name, RegexExp):
+        x = re.search(RegexExp, element.get())
         if x:
             entry.configure({"background": "green"})
         else:
