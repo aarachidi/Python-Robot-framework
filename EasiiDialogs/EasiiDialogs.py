@@ -35,11 +35,13 @@ class EasiiDialogs(object):
     def createLabel(self, text="", value="", width=25):
         if value != "" :
             column = 2
-            label = Label(self.root, text=value, width=width)
+            justif = 'e'
+            label = Label(self.root, text=value, width=width, anchor='w')
             label.grid(row=self.gridRow, column=3)
         else:
             column = 3
-        label = Label(self.root, text=text, width=width)
+            justif = 'w'
+        label = Label(self.root, text=text, width=width, anchor=justif)
         label.grid(row=self.gridRow, column=column)
         self.gridRow += 1
         
@@ -48,7 +50,7 @@ class EasiiDialogs(object):
 
         varEntry = StringVar(value=default)
         entry1 = Entry(self.root, textvariable = varEntry, width= width)
-        entry1.grid(row=self.gridRow, column=3)
+        entry1.grid(row=self.gridRow, column=3, sticky ="w")
 
         if isinstance(min , float) :
             min = float(min)
@@ -60,7 +62,7 @@ class EasiiDialogs(object):
         else :
             max = int(max)
 
-        nameEntry = Label(self.root, text=name, width= name_width)
+        nameEntry = Label(self.root, text=name, width= name_width, anchor='e')
         nameEntry.grid(row=self.gridRow, column=2)
 
         varEntry.trace("w", lambda name, index, mode, \
@@ -73,8 +75,8 @@ class EasiiDialogs(object):
 
         varEntry = StringVar()
         entry1 = Entry(self.root, textvariable = varEntry, width= width)
-        entry1.grid(row=self.gridRow, column=3)
-        nameEntry = Label(self.root, text=name, width= name_width)
+        entry1.grid(row=self.gridRow, column=3, sticky ="w")
+        nameEntry = Label(self.root, text=name, width= name_width, anchor='e')
         nameEntry.grid(row=self.gridRow, column=2)
         varEntry.trace("w", lambda name, index, mode, \
             varEntry=varEntry,  entry=entry1, nm=name, RegexExp=RegexExpress: \
