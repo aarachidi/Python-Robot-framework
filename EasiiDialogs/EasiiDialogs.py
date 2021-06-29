@@ -136,3 +136,7 @@ class EasiiDialogs(object):
 
     def selectEntry(self, event):
         event.widget.selection_range(0, END)
+
+    def changePolice(self, style, size):
+        self.root.option_add("*Label*Font", (style, size))
+        self.root.option_add("*Entry*Font", (style, size))

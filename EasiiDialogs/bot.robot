@@ -18,6 +18,9 @@ Entry with regex Expression
 Button
     [Arguments]    @{expected}
     UserMesures.createButton  @{expected}
+Style
+    [Arguments]    @{expected}
+    UserMesures.changePolice  @{expected}
 show
     [Arguments]      @{expected}
     UserMesures.show        @{expected}
@@ -25,6 +28,7 @@ show
 
 *** Test Cases ***
 test Function 
+    Style       Helvetica      22
     Label    name:        achraf
     Label    mot de passe
     Entry       input1     17      12   12   10  
