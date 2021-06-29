@@ -4,7 +4,7 @@ from tkinter.constants import TRUE
 
 class EasiiDialogs(object):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
-    #ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
+    #ROBOT_LIBRARY_SCOPE = 'SUITE'
     def __init__(self):
         
         #Variable à retourner
@@ -30,22 +30,22 @@ class EasiiDialogs(object):
             self.gridRow += 1
 
     
-    def createLabel(self, text="", valeur=""):
+    def createLabel(self, text="", valeur="", width=25):
         if valeur != "" :
             column = 2
-            label = Label(self.root, text=valeur, width=25)
+            label = Label(self.root, text=valeur, width=width)
             label.grid(row=self.gridRow, column=3)
         else:
             column = 3
-        label = Label(self.root, text=text, width=25)
+        label = Label(self.root, text=text, width=width)
         label.grid(row=self.gridRow, column=column)
         self.gridRow += 1
         
 
-    def createEntry(self, name="", max='0', min='0', default="0"):
+    def createEntry(self, name="", max='0', min='0', default="0", width=25):
 
         varEntry = StringVar(value=default)
-        entry1 = Entry(self.root, textvariable = varEntry)
+        entry1 = Entry(self.root, textvariable = varEntry, width= width)
         entry1.grid(row=self.gridRow, column=3)
 
         if isinstance(min , float) :
@@ -58,22 +58,22 @@ class EasiiDialogs(object):
         else :
             max = int(max)
 
-        if(max != 0 or min != 0):
-            label1 = Label(self.root, text=str(min))
-            label1.grid(row=self.gridRow, column=2)
-            label1 = Label(self.root, text=str(max))
-            label1.grid(row=self.gridRow, column=4)
+        nameEntry = Label(self.root, text=name, width= width)
+        nameEntry.grid(row=self.gridRow, column=2)
+
         varEntry.trace("w", lambda name, index, mode, \
             varEntry=varEntry, max=int(max), min=int(min), entry=entry1, nm=name: \
                 self.eventHandlerEntry(varEntry, max, min, entry, nm ))
         self.result[name] = ""
         self.gridRow += 1
 
-    def createEntryWithRegex(self, name="", RegexExpress=""):
+    def createEntryWithRegex(self, name="", RegexExpress="", width=25):
 
         varEntry = StringVar()
-        entry1 = Entry(self.root, textvariable = varEntry)
+        entry1 = Entry(self.root, textvariable = varEntry, width= width)
         entry1.grid(row=self.gridRow, column=3)
+        nameEntry = Label(self.root, text=name, width= width)
+        nameEntry.grid(row=self.gridRow, column=2)
         varEntry.trace("w", lambda name, index, mode, \
             varEntry=varEntry,  entry=entry1, nm=name, RegexExp=RegexExpress: \
                 self.eventHandlerEntryWithRegex(varEntry, entry, nm , RegexExp))
