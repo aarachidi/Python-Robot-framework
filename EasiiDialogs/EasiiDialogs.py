@@ -42,7 +42,7 @@ class EasiiDialogs(object):
         self.gridRow += 1
         
 
-    def createEntry(self, name="", max='0', min='0', default="0", width=25):
+    def createEntry(self, name="", max='0', min='0', default="0", width=25, name_width= 25):
 
         varEntry = StringVar(value=default)
         entry1 = Entry(self.root, textvariable = varEntry, width= width)
@@ -58,7 +58,7 @@ class EasiiDialogs(object):
         else :
             max = int(max)
 
-        nameEntry = Label(self.root, text=name, width= width)
+        nameEntry = Label(self.root, text=name, width= name_width)
         nameEntry.grid(row=self.gridRow, column=2)
 
         varEntry.trace("w", lambda name, index, mode, \
@@ -67,12 +67,12 @@ class EasiiDialogs(object):
         self.result[name] = ""
         self.gridRow += 1
 
-    def createEntryWithRegex(self, name="", RegexExpress="", width=25):
+    def createEntryWithRegex(self, name="", RegexExpress="", width=25, name_width= 25):
 
         varEntry = StringVar()
         entry1 = Entry(self.root, textvariable = varEntry, width= width)
         entry1.grid(row=self.gridRow, column=3)
-        nameEntry = Label(self.root, text=name, width= width)
+        nameEntry = Label(self.root, text=name, width= name_width)
         nameEntry.grid(row=self.gridRow, column=2)
         varEntry.trace("w", lambda name, index, mode, \
             varEntry=varEntry,  entry=entry1, nm=name, RegexExp=RegexExpress: \
