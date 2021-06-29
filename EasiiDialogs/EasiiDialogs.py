@@ -88,7 +88,7 @@ class EasiiDialogs(object):
 
     def createButton(self, text=""):
         button = Button(self.root, text=text, bg= "#1ED454")
-        button.grid(row=self.gridRow + 3, column=3)
+        button.grid(row=self.gridRow + 3, column=3, sticky ="w")
         button.bind('<Button-1>', self.eventHandlerButton)
         self.buttonExiste = TRUE
         self.gridRow += 3
@@ -140,3 +140,4 @@ class EasiiDialogs(object):
     def changePolice(self, style, size):
         self.root.option_add("*Label*Font", (style, size))
         self.root.option_add("*Entry*Font", (style, size))
+        self.root.option_add("*Button*Font", (style, size))
