@@ -28,7 +28,7 @@ show
 
 *** Test Cases ***
 test Function 
-    Style       Helvetica      22
+    Style       Helvetica      15
     Label    name:        achraf
     Label    mot de passe
     Entry       input1     17      12   12   10  

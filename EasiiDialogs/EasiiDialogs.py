@@ -4,27 +4,25 @@ from tkinter.constants import TRUE
 
 class EasiiDialogs(object):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
-    #ROBOT_LIBRARY_SCOPE = 'SUITE'
     def __init__(self):
         
-        #Variable à retourner
+        #Input's results
         self.result = {}
+
+        #Initialize 
         self.root = Tk()
         self.gridRow = 4
         self.gridColumn = 0
         self.buttonExiste = False
+
         #Set interface in front
         self.root.attributes("-topmost", True)
         #Bind enter with button
         self.root.bind('<Return>', self.eventHandlerButton)
 
-        col_count, row_count = self.root.grid_size()
-        for col in range(col_count):
-            self.root.grid_columnconfigure(col, minsize=20)
+        self.maintainSpace()
 
-        for row in range(row_count):
-            self.root.grid_rowconfigure(row, minsize=20)
-
+    #Create empty grids for space
     def createSpace(self, nbrSpace):
         for i in range(nbrSpace) :
             lb = Label(self.root, text="\n")
@@ -45,7 +43,7 @@ class EasiiDialogs(object):
         label.grid(row=self.gridRow, column=column)
         self.gridRow += 1
         
-
+    #If you want to use the attributs default, width and name_width you need to use also the min and max attributs
     def createEntry(self, name="", max='0', min='0', default="0", width=25, name_width= 25):
 
         varEntry = StringVar(value=default)
@@ -93,8 +91,8 @@ class EasiiDialogs(object):
         self.buttonExiste = TRUE
         self.gridRow += 3
 
+    #Results are sent when button is clicked
     def eventHandlerButton(self, event):
-        #print(event.widget['text'])
         self.root.quit()
     
     def eventHandlerEntry(self, element, max, min, entry, name):
@@ -117,26 +115,35 @@ class EasiiDialogs(object):
             entry.configure({"background": "white"})
         self.result[name] = element.get()
 
-    def show(self, name):
-        #Create button if not existe
-        if self.buttonExiste == False:
-            self.createButton("Validate")
-        self.createSpace(5)
+    #Make empty grids not accessible in order to maintain space
+    def maintainSpace(self):
         col_count, row_count = self.root.grid_size()
         for col in range(col_count):
             self.root.grid_columnconfigure(col, minsize=20)
 
         for row in range(row_count):
             self.root.grid_rowconfigure(row, minsize=20)
+
+    def show(self, name):
+        #Create button if not existe
+        if self.buttonExiste == False:
+            self.createButton("Validate")
+
+        self.createSpace(5)
+        self.maintainSpace()
+
         self.root.title(name)
         self.root.mainloop()
 
+    #Return results
     def getResult(self):
         return self.result
 
+    #Select the text inside the entry when the entry is clicked
     def selectEntry(self, event):
         event.widget.selection_range(0, END)
 
+    #Customize style of interface
     def changePolice(self, style, size):
         self.root.option_add("*Label*Font", (style, size))
         self.root.option_add("*Entry*Font", (style, size))
