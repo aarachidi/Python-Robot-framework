@@ -15,6 +15,8 @@ class EasiiDialogs(object):
         self.buttonExiste = False
         #Set interface in front
         self.root.attributes("-topmost", True)
+        #Bind enter with button
+        self.root.bind('<Return>', self.eventHandlerButton)
 
         col_count, row_count = self.root.grid_size()
         for col in range(col_count):
