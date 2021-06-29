@@ -1,4 +1,4 @@
-from tkinter import Tk, Label, Button, Entry, Scale, HORIZONTAL, DoubleVar, StringVar
+from tkinter import Tk, Label, Button, Entry, Scale, HORIZONTAL, DoubleVar, StringVar, END
 import re
 from tkinter.constants import TRUE
 
@@ -70,6 +70,7 @@ class EasiiDialogs(object):
                 self.eventHandlerEntry(varEntry, max, min, entry, nm ))
         self.result[name] = ""
         self.gridRow += 1
+        entry1.bind("<FocusIn>", self.selectEntry)
 
     def createEntryWithRegex(self, name="", RegexExpress="", width=25, name_width= 25):
 
@@ -83,6 +84,7 @@ class EasiiDialogs(object):
                 self.eventHandlerEntryWithRegex(varEntry, entry, nm , RegexExp))
         self.result[name] = ""
         self.gridRow += 1
+        entry1.bind("<FocusIn>", self.selectEntry)
 
     def createButton(self, text=""):
         button = Button(self.root, text=text, bg= "#1ED454")
@@ -131,3 +133,6 @@ class EasiiDialogs(object):
 
     def getResult(self):
         return self.result
+
+    def selectEntry(self, event):
+        event.widget.selection_range(0, END)
