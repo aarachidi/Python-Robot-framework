@@ -30,10 +30,10 @@ class EasiiDialogs(object):
             self.gridRow += 1
 
     
-    def createLabel(self, text="", valeur="", width=25):
-        if valeur != "" :
+    def createLabel(self, text="", value="", width=25):
+        if value != "" :
             column = 2
-            label = Label(self.root, text=valeur, width=width)
+            label = Label(self.root, text=value, width=width)
             label.grid(row=self.gridRow, column=3)
         else:
             column = 3
@@ -90,7 +90,6 @@ class EasiiDialogs(object):
     def eventHandlerButton(self, event):
         #print(event.widget['text'])
         self.root.quit()
-        return "ace"
     
     def eventHandlerEntry(self, element, max, min, entry, name):
         if((element.get() == "")):
