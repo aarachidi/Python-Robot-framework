@@ -70,8 +70,8 @@ class CurseDialog():
             i += 1
         if(index_vert == i):
             stdscr.attron(curses.color_pair(1))
-            stdscr.addstr(h//2 + i + 4, w//2, "Validate")
+            stdscr.addstr(h//2 + i + 4, w//2 - 2, "Validate")
             stdscr.attroff(curses.color_pair(1))
         else:
-            stdscr.addstr(h//2 + i + 4, w//2, "Validate")
+            stdscr.addstr(h//2 + i + 4, w//2 - 2, "Validate")
         stdscr.refresh()
