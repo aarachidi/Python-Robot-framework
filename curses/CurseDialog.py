@@ -14,7 +14,7 @@ class CurseDialog():
         curses.wrapper(self.do)
 
     def do(self, stdscr):
-        curses.curs_set(1)
+        curses.curs_set(0)
         curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
         self.print_center(stdscr, self.inputs, self.index_vert)
         self.getInput(stdscr)

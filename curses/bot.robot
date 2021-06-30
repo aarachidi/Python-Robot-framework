@@ -19,6 +19,5 @@ show
 test Function 
     Entry       input1      in      
     Entry       input2      in1    
-    Entry       input3      in2    
-    Entry       input4      in3    
+    Entry       input3      in2   
     show   
