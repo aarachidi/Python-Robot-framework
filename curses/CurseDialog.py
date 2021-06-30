@@ -39,7 +39,7 @@ class CurseDialog():
             key = stdscr.getch()
             if(chr(key) is 'q'):
                 break
-            elif(key == curses.KEY_ENTER or key in [10, 13]):
+            elif((key == curses.KEY_ENTER or key in [10, 13]) and self.index_vert == len(self.inputs)):
                 break
             elif(key == curses.KEY_UP and self.index_vert != 0):
                 self.index_vert -= 1
@@ -48,7 +48,7 @@ class CurseDialog():
             elif(key == 8):
                 self.inputs[self.index_vert] = self.inputs[self.index_vert][:-1]
                 self.results[self.index_vert] = self.results[self.index_vert][:-1]
-            elif(key != curses.KEY_LEFT and key != curses.KEY_RIGHT and key != curses.KEY_UP and key != curses.KEY_DOWN):
+            elif(key >= 32 and key <= 126):
                 self.inputs[self.index_vert] += chr(key)
                 self.results[self.index_vert] += chr(key)
             self.print_center(stdscr, self.inputs, self.index_vert)
