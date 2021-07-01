@@ -1,37 +1,43 @@
 ** Settings ***
 Documentation     How to use a custom Python Dialogs.
-Library     EasiiDialogs.py         WITH NAME    UserMesures
+Library     MyTestApp.py         WITH NAME    UserMesures
+Library     EasiiDialogs.py         WITH NAME    UserMesures2
 Metadata         --name    Dialogs
-*** Variables ***
-${numbers}    
+
 
 *** Keywords ***
+
 Label
     [Arguments]    @{expected}
-    UserMesures.createLabel  @{expected}
-Entry
+    IF      '${mode}' =='command'    
+    ${instance}     Get library instance     UserMesures
+    ELSE
+    ${instance}     Get library instance     UserMesures2
+    END
+    Call Method     ${instance}         createLabel      @{expected}
+
+Input
     [Arguments]    @{expected}
-    UserMesures.createEntry  @{expected}
-Entry with regex Expression
-    [Arguments]    @{expected}
-    UserMesures.createEntryWithRegex  @{expected}
-Button
-    [Arguments]    @{expected}
-    UserMesures.createButton  @{expected}
-Style
-    [Arguments]    @{expected}
-    UserMesures.changePolice  @{expected}
+    IF      '${mode}' =='command'    
+    ${instance}     Get library instance     UserMesures
+    ELSE
+    ${instance}     Get library instance     UserMesures2
+    END
+    Call Method     ${instance}         createEntry      @{expected}
+
 show
-    [Arguments]      @{expected}
-    UserMesures.show        @{expected}
-    ${a}=    UserMesures.getResult     
+    [Arguments]    @{expected}
+    IF      '${mode}' =='command'    
+    ${instance}     Get library instance     UserMesures
+    ELSE
+    ${instance}     Get library instance     UserMesures2
+    END
+    Call Method     ${instance}         show      @{expected}
+    ${result} =    Call Method     ${instance}         getResult      @{expected}     
 
 *** Test Cases ***
-test Function 
-    Style       mincho       15
-    Label    name:        achraf
-    Label    mot de passe
-    Entry       input1     17      12   12   10  
-    Entry       input2      
-    Entry with regex Expression        input3      ^start
-    show        Main Interface
+test Function  
+    Input      input1 
+    Label      test
+    Input      input2
+    show  
