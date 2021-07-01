@@ -16,10 +16,9 @@ class MyTestApp(npyscreen.NPSAppManaged):
         temp['text'] = text
         dict.append(temp)
 
-    def createSimpleInput(self, text="",name=""):
+    def createEntry(self, name=""):
         temp = {}
         temp['type'] = "TitleText"
-        temp['text'] = text
         temp['name'] = name
         dict.append(temp)
 
@@ -36,7 +35,7 @@ class MyTestApp(npyscreen.NPSAppManaged):
             if element['type'] == "FixedText":
                 self.form.add(npyscreen.FixedText, value = element['text'])
             elif element['type'] == "TitleText":
-                input = self.form.add(npyscreen.TitleText, name = element['text'])
+                input = self.form.add(npyscreen.TitleText, name = element['name'])
                 result[element['name']] = input
         self.registerForm("MAIN", self.form)
 
