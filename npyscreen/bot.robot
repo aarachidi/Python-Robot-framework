@@ -24,4 +24,5 @@ show
 test Function  
     Input      input1    i1
     Label      test
+    Input      input1     i2
     show  

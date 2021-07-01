@@ -2,7 +2,7 @@ import npyscreen
 
 
 dict = []
-result = []
+result = {}
 class MyTestApp(npyscreen.NPSAppManaged):
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
@@ -24,9 +24,10 @@ class MyTestApp(npyscreen.NPSAppManaged):
         dict.append(temp)
 
     def getResult(self):
-        results = []
-        for element in result:
-            results.append(element.value)
+        results = {}
+        keys = result.keys()
+        for key in keys:
+            results[key] = result[key].value
         return results
 
     def onStart(self):
@@ -36,7 +37,7 @@ class MyTestApp(npyscreen.NPSAppManaged):
                 self.form.add(npyscreen.FixedText, value = element['text'])
             elif element['type'] == "TitleText":
                 input = self.form.add(npyscreen.TitleText, name = element['text'])
-                result.append(input)
+                result[element['name']] = input
         self.registerForm("MAIN", self.form)
 
 
