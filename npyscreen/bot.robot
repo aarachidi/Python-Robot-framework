@@ -38,6 +38,7 @@ show
 *** Test Cases ***
 test Function  
     Input      input1 
-    Label      test
-    Input      input2
+    Label      test    True
+    Input      input2      
+    Input      input3
     show  

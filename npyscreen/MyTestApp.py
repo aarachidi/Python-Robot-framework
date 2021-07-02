@@ -10,10 +10,11 @@ class MyTestApp(npyscreen.NPSAppManaged):
     def show(self):
         self.run()
 
-    def createLabel(self, text=""):
+    def createLabel(self, text="", value=""):
         temp = {}
         temp['type'] = "FixedText"
         temp['text'] = text
+        temp['value'] = value
         dict.append(temp)
 
     def createEntry(self, name=""):
@@ -33,7 +34,7 @@ class MyTestApp(npyscreen.NPSAppManaged):
         self.form = MainForm()
         for element in dict:
             if element['type'] == "FixedText":
-                self.form.add(npyscreen.FixedText, value = element['text'])
+                self.form.add(npyscreen.TitleText, name= element['text'],  value= element['value'], editable=False)
             elif element['type'] == "TitleText":
                 input = self.form.add(npyscreen.TitleText, name = element['name'])
                 result[element['name']] = input
