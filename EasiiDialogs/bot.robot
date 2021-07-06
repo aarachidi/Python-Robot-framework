@@ -1,11 +1,16 @@
 ** Settings ***
 Documentation     How to use a custom Python Dialogs.
-Library     EasiiDialogs.py         WITH NAME    UserMesures
+Library     Dialogs
+Library     OperatingSystem
 Metadata         --name    Dialogs
 *** Variables ***
 ${numbers}    
 
 *** Keywords ***
+Get Library
+    ${files} =	  List Files In Directory  	.	 EasiiDialogs.py	     absolute
+    Log    ${files}[0]
+    Import Library       ${files}[0]       WITH NAME     UserMesures
 Label
     [Arguments]    @{expected}
     UserMesures.createLabel  @{expected}
@@ -27,7 +32,9 @@ show
     ${a}=    UserMesures.getResult     
 
 *** Test Cases ***
-test Function 
+test Function
+    Pause Execution
+    Get Library
     Style       mincho       15
     Label    name:        achraf
     Label    mot de passe

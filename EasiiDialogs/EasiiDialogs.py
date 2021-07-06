@@ -1,4 +1,4 @@
-from tkinter import Tk, Label, Button, Entry, Scale, HORIZONTAL, DoubleVar, StringVar, END
+from tkinter import Tk, Label, Button, Entry,  HORIZONTAL,  StringVar, END, Toplevel
 import re
 from tkinter.constants import TRUE
 
@@ -14,6 +14,7 @@ class EasiiDialogs(object):
         self.gridRow = 4
         self.gridColumn = 0
         self.buttonExiste = False
+
 
         #Set interface in front
         self.root.attributes("-topmost", True)
