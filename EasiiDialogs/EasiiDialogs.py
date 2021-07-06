@@ -149,3 +149,6 @@ class EasiiDialogs(object):
         self.root.option_add("*Label*Font", (style, size))
         self.root.option_add("*Entry*Font", (style, size))
         self.root.option_add("*Button*Font", (style, size))
+    
+    def close(self):
+        self.root.destroy()

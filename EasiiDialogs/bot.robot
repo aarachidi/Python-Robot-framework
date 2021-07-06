@@ -7,7 +7,7 @@ Metadata         --name    Dialogs
 ${numbers}    
 
 *** Keywords ***
-Get Library
+init
     ${files} =	  List Files In Directory  	.	 EasiiDialogs.py	     absolute
     Log    ${files}[0]
     Import Library       ${files}[0]       WITH NAME     UserMesures
@@ -29,12 +29,13 @@ Style
 show
     [Arguments]      @{expected}
     UserMesures.show        @{expected}
-    ${a}=    UserMesures.getResult     
-
+    ${a}=    UserMesures.getResult 
+Del init    
+    UserMesures.close
 *** Test Cases ***
 test Function
     Pause Execution
-    Get Library
+    init
     Style       mincho       15
     Label    name:        achraf
     Label    mot de passe
@@ -42,3 +43,4 @@ test Function
     Entry       input2      
     Entry with regex Expression        input3      ^start
     show        Main Interface
+    Del init
