@@ -6,7 +6,8 @@ from robot.model import SuiteVisitor
 import glob
 from robot import run
 import xml.etree.ElementTree as ET
-from os import rename, remove, path
+from os import rename, remove, path, getcwd, chdir
+import ntpath
 
 
 class TestCasesFinder(SuiteVisitor):
@@ -22,18 +23,19 @@ class Window(QtWidgets.QWidget):
         super(Window, self).__init__(parent)
 
         # List of tests
-        data = self.listOfTest()
-        keys = data.keys()
+        self.data = self.listOfTest()
+        keys = self.data.keys()
 
         self.tree = QtWidgets.QTreeWidget(self)
         self.tree.setHeaderLabel("")
         for key in keys:
             parent = QtWidgets.QTreeWidgetItem(self.tree)
-            title = key.replace(".robot", "")
+            key_temp = ntpath.basename(key)
+            title = key_temp.replace(".robot", "")
             parent.setText(0, title)
             parent.setFlags(parent.flags() | Qt.ItemIsTristate |
                             Qt.ItemIsUserCheckable)
-            for element in data[key]:
+            for element in self.data[key]:
                 child = QtWidgets.QTreeWidgetItem(parent)
                 child.setFlags(child.flags() | Qt.ItemIsUserCheckable)
                 child.setText(0, element)
@@ -68,15 +70,25 @@ class Window(QtWidgets.QWidget):
         dic = self.getCheckedItem()
         keys = dic.keys()
         self.setEnabled(False)
+        current_path = getcwd()
+        if  len(sys.argv) != 1:
+            next_path = sys.argv[1]
+        else:
+            next_path = current_path
         for key in keys:
             if len(dic[key]) != 0:
+                chdir(next_path)
                 pa = key + ".robot"
                 run(pa, name='Example', test=dic[key])
                 if path.exists(key + ".html"):
                     remove(key + ".html")
-                rename("report.html", key + ".html")
+                chdir(current_path)
+                if path.exists(key + ".html"):
+                    remove(key + ".html")
+                rename("report.html", next_path+"/" + key + ".html")
+                chdir(next_path)
+        chdir(current_path)
         self.setEnabled(True)
-        print(dic)
 
     def getCheckedItem(self):
         checked_items = []
@@ -102,19 +114,6 @@ class Window(QtWidgets.QWidget):
 
     def clickMethodLoad(self, event):
         self.openFileNameDialog()
-
-    def listOfTest(self):
-        files = glob.glob("*.robot")
-        dict = {}
-        for file in files:
-            dict[file] = []
-            builder = TestSuiteBuilder()
-            testsuite = builder.build(file)
-            finder = TestCasesFinder()
-            testsuite.visit(finder)
-            for element in finder.tests:
-                dict[file].append(element.name)
-        return dict
 
     def keyPressEvent(self, event):
         if event.key() == 16777220:
@@ -192,6 +191,23 @@ class Window(QtWidgets.QWidget):
                 elif(grand_children == 0 and child.text(0) == subElement):
                     child.setCheckState(0, Qt.Checked)
         recurse(self.tree.invisibleRootItem())
+    
+    def listOfTest(self):
+        if len(sys.argv) == 1:
+            files = glob.glob("./*.robot")
+        else:
+            files = glob.glob(sys.argv[1]+"/*.robot")
+        dict = {}
+        for file in files:
+            #name= ntpath.basename(file)
+            dict[file] = []
+            builder = TestSuiteBuilder()
+            testsuite = builder.build(file)
+            finder = TestCasesFinder()
+            testsuite.visit(finder)
+            for element in finder.tests:
+                dict[file].append(element.name)
+        return dict
 
 
 
