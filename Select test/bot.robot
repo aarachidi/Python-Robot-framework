@@ -6,9 +6,9 @@ Metadata         --name    Dialogs
     
 
 *** Test Cases ***
-test Function
+testFunction
     get_value_from_user     enter an input
     Pause Execution        Test is paused for now
-test Function2
+testFunction2
     get_value_from_user     enter an input
     Pause Execution        Test is paused for now

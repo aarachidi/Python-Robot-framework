@@ -22,8 +22,11 @@ class Window(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(Window, self).__init__(parent)
 
+        grid = QtWidgets.QGridLayout()
+
         # List of tests
-        self.data = self.listOfTest()
+        self.path, self.option, self.data = self.listOfTest()
+        print(self.option)
         keys = self.data.keys()
 
         self.tree = QtWidgets.QTreeWidget(self)
@@ -44,49 +47,58 @@ class Window(QtWidgets.QWidget):
 
         self.tree.expandAll()
         # Tree position
-        self.tree.move(50, 50)
-        self.tree.setColumnWidth(0, 400)
         self.tree.resize(500, 400)
+        grid.addWidget(self.tree, 1, 1, 3, 5)
+        self.tree.setColumnWidth(0, 400)
+        
 
         # Launch Button
         pybutton = QtWidgets.QPushButton('Launch', self)
         pybutton.resize(100, 60)
         pybutton.clicked.connect(self.clickMethodLaunch)
-        pybutton.move(250, 500)
+        grid.addWidget(pybutton, 5, 3)
 
         #Save Button
         pybutton2 = QtWidgets.QPushButton('Save', self)
         pybutton2.resize(100, 60)
-        pybutton2.move(400, 500)
+        grid.addWidget(pybutton2, 5, 5)
         pybutton2.clicked.connect(self.clickMethodSave)
 
         #Load Button
         pybutton3 = QtWidgets.QPushButton('Load', self)
         pybutton3.resize(100, 60)
-        pybutton3.move(100, 500)
+        grid.addWidget(pybutton3, 5, 1)
         pybutton3.clicked.connect(self.clickMethodLoad)
+
+        grid.setSpacing(50)
+
+        #Progress bar
+        self.pbar = QtWidgets.QProgressBar(self)
+        self.pbar.resize(300, 30)
+        grid.addWidget(self.pbar, 4, 2, 1, 3)
+
+        self.setLayout(grid)
 
     def clickMethodLaunch(self, event):
         dic = self.getCheckedItem()
         keys = dic.keys()
         self.setEnabled(False)
         current_path = getcwd()
-        if  len(sys.argv) != 1:
-            next_path = sys.argv[1]
-        else:
-            next_path = current_path
+        self.option['test'] = []
         for key in keys:
             if len(dic[key]) != 0:
-                chdir(next_path)
+                chdir(self.path)
                 pa = key + ".robot"
-                run(pa, name='Example', test=dic[key])
+                self.option['test'] = dic[key]
+                print(self.option)
+                run(pa, **self.option)
                 if path.exists(key + ".html"):
                     remove(key + ".html")
                 chdir(current_path)
                 if path.exists(key + ".html"):
                     remove(key + ".html")
-                rename("report.html", next_path+"/" + key + ".html")
-                chdir(next_path)
+                rename("report.html", self.path+"/" + key + ".html")
+                chdir(self.path)
         chdir(current_path)
         self.setEnabled(True)
 
@@ -193,13 +205,10 @@ class Window(QtWidgets.QWidget):
         recurse(self.tree.invisibleRootItem())
     
     def listOfTest(self):
-        if len(sys.argv) == 1:
-            files = glob.glob("./*.robot")
-        else:
-            files = glob.glob(sys.argv[1]+"/*.robot")
+        path, dict_Option = self.listOfOption()
+        files = glob.glob(path+"/*.robot")
         dict = {}
         for file in files:
-            #name= ntpath.basename(file)
             dict[file] = []
             builder = TestSuiteBuilder()
             testsuite = builder.build(file)
@@ -207,7 +216,28 @@ class Window(QtWidgets.QWidget):
             testsuite.visit(finder)
             for element in finder.tests:
                 dict[file].append(element.name)
-        return dict
+        return path, dict_Option, dict
+    
+    def listOfOption(self):
+        dict = {}
+        i = 1
+        path = "./"
+        while(i < len(sys.argv)):
+            if(i < len(sys.argv) - 1):
+                key = sys.argv[i].strip("-")
+                try:
+                    dict[key].append(sys.argv[i + 1])
+                except:
+                    dict[key] = []
+                    dict[key].append(sys.argv[i + 1])
+            elif(i == len(sys.argv) - 1):
+                path = sys.argv[i]
+            i += 2
+        keys = dict.keys()
+        for key in keys:
+            if len(dict[key]) == 1:
+                dict[key] = dict[key][0]
+        return path, dict
 
 
 
