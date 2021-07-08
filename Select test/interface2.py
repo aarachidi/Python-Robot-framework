@@ -8,7 +8,42 @@ from robot import run
 import xml.etree.ElementTree as ET
 from os import rename, remove, path, getcwd, chdir
 import ntpath
+import os
+import tempfile
 
+
+
+class listener:
+    ROBOT_LISTENER_API_VERSION = 2
+
+    def __init__(self, filename='listen.txt', obj=None):
+        outpath = os.path.join(tempfile.gettempdir(), filename)
+        self.outfile = open(outpath, 'w')
+        self.obj = obj
+        self.prog = obj.getCheckedItemCount()
+        self.prog = 100//self.prog
+
+    def start_suite(self, name, attrs):
+        self.outfile.write("%s '%s'\n" % (name, attrs['doc']))
+
+    def start_test(self, name, attrs):
+        self.obj.text.setText("Test actuel : " + name)
+        self.obj.colorActuelTest(name)
+        tags = ' '.join(attrs['tags'])
+        self.outfile.write("- %s '%s' [ %s ] :: " % (name, attrs['doc'], tags))
+
+    def end_test(self, name, attrs):
+        self.obj.updateProgress(self.obj.pbar.value() + self.prog)
+        if attrs['status'] == 'PASS':
+            self.outfile.write('PASS\n')
+        else:
+            self.outfile.write('FAIL: %s\n' % attrs['message'])
+
+    def end_suite(self, name, attrs):
+         self.outfile.write('%s\n%s\n' % (attrs['status'], attrs['message']))
+
+    def close(self):
+        self.outfile.close()
 
 class TestCasesFinder(SuiteVisitor):
     def __init__(self):
@@ -26,7 +61,6 @@ class Window(QtWidgets.QWidget):
 
         # List of tests
         self.path, self.option, self.data = self.listOfTest()
-        print(self.option)
         keys = self.data.keys()
 
         self.tree = QtWidgets.QTreeWidget(self)
@@ -48,7 +82,7 @@ class Window(QtWidgets.QWidget):
         self.tree.expandAll()
         # Tree position
         self.tree.resize(500, 400)
-        grid.addWidget(self.tree, 1, 1, 3, 5)
+        grid.addWidget(self.tree, 2, 1, 3, 5)
         self.tree.setColumnWidth(0, 400)
         
 
@@ -56,18 +90,18 @@ class Window(QtWidgets.QWidget):
         pybutton = QtWidgets.QPushButton('Launch', self)
         pybutton.resize(100, 60)
         pybutton.clicked.connect(self.clickMethodLaunch)
-        grid.addWidget(pybutton, 5, 3)
+        grid.addWidget(pybutton, 7, 3)
 
         #Save Button
         pybutton2 = QtWidgets.QPushButton('Save', self)
         pybutton2.resize(100, 60)
-        grid.addWidget(pybutton2, 5, 5)
+        grid.addWidget(pybutton2, 7, 5)
         pybutton2.clicked.connect(self.clickMethodSave)
 
         #Load Button
         pybutton3 = QtWidgets.QPushButton('Load', self)
         pybutton3.resize(100, 60)
-        grid.addWidget(pybutton3, 5, 1)
+        grid.addWidget(pybutton3, 7, 1)
         pybutton3.clicked.connect(self.clickMethodLoad)
 
         grid.setSpacing(50)
@@ -75,8 +109,17 @@ class Window(QtWidgets.QWidget):
         #Progress bar
         self.pbar = QtWidgets.QProgressBar(self)
         self.pbar.resize(300, 30)
-        grid.addWidget(self.pbar, 4, 2, 1, 3)
+        grid.addWidget(self.pbar, 5, 1, 1, 5)
 
+        #Text of current test
+        self.text = QtWidgets.QLabel(text="")
+        self.text.setFont(QtGui.QFont('Helvetica font', 20))
+        grid.addWidget(self.text, 6, 1, 1, 5)
+
+        #Text of current config file
+        self.config = QtWidgets.QLabel(text="")
+        self.config.setFont(QtGui.QFont('Helvetica font', 13))
+        grid.addWidget(self.config, 1, 1, 1, 5)
         self.setLayout(grid)
 
     def clickMethodLaunch(self, event):
@@ -85,13 +128,13 @@ class Window(QtWidgets.QWidget):
         self.setEnabled(False)
         current_path = getcwd()
         self.option['test'] = []
+        self.pbar.setValue(0)
         for key in keys:
             if len(dic[key]) != 0:
                 chdir(self.path)
                 pa = key + ".robot"
                 self.option['test'] = dic[key]
-                print(self.option)
-                run(pa, **self.option)
+                run(pa, **self.option, listener=listener(obj=self))
                 if path.exists(key + ".html"):
                     remove(key + ".html")
                 chdir(current_path)
@@ -99,6 +142,9 @@ class Window(QtWidgets.QWidget):
                     remove(key + ".html")
                 rename("report.html", self.path+"/" + key + ".html")
                 chdir(self.path)
+        self.updateProgress(100)
+        self.text.setText("")
+        self.setInitialColor()
         chdir(current_path)
         self.setEnabled(True)
 
@@ -120,6 +166,22 @@ class Window(QtWidgets.QWidget):
 
         recurse(self.tree.invisibleRootItem())
         return dic
+
+    def getCheckedItemCount(self):
+        dic = {}
+        dic['count'] = 0
+
+        def recurse(parent_item):
+            for i in range(parent_item.childCount()):
+                child = parent_item.child(i)
+                grand_children = child.childCount()
+                if grand_children > 0:
+                    recurse(child)
+
+                if child.checkState(0) == Qt.Checked and grand_children == 0:
+                    dic['count'] += 1
+        recurse(self.tree.invisibleRootItem())
+        return dic['count']
     
     def clickMethodSave(self, event):
         self.saveFileDialog()
@@ -143,6 +205,11 @@ class Window(QtWidgets.QWidget):
                 if(len(dic[key]) > 0):
                     for subElement in dic[key]:
                         self.searchForItem(key, subElement)
+    
+    def updateProgress(self, value):
+        self.setEnabled(True)
+        self.pbar.setValue(value)
+        self.setEnabled(False)
 
     def saveFileDialog(self):
         options = QtWidgets.QFileDialog.Options()
@@ -172,6 +239,7 @@ class Window(QtWidgets.QWidget):
         try:
             tree = ET.parse(path)
             root = tree.getroot()
+            self.config.setText("Configuration file : " + (ntpath.basename(path)).replace(".xml", ""))
             for elem in root:
                 dic[elem.attrib['name']] = []
                 for subelem in elem:
@@ -191,6 +259,7 @@ class Window(QtWidgets.QWidget):
                 child = parent_item.child(i)
                 child.setCheckState(0, Qt.Unchecked)
         recurse(self.tree.invisibleRootItem())
+    
 
     def searchForItem(self, element, subElement):
 
@@ -202,6 +271,33 @@ class Window(QtWidgets.QWidget):
                     recurse(child)
                 elif(grand_children == 0 and child.text(0) == subElement):
                     child.setCheckState(0, Qt.Checked)
+        recurse(self.tree.invisibleRootItem())
+    
+    def setInitialColor(self):
+        def recurse(parent_item):
+            for i in range(parent_item.childCount()):
+                child = parent_item.child(i)
+                grand_children = child.childCount()
+                if grand_children > 0:
+                    recurse(child)
+                else:
+                    child.setForeground(0,QtGui.QBrush(QtGui.QColor("black")))
+                    child.setFont(0, QtGui.QFont('Arial', 8))
+        recurse(self.tree.invisibleRootItem())
+    
+    def colorActuelTest(self, name):
+        def recurse(parent_item):
+            for i in range(parent_item.childCount()):
+                child = parent_item.child(i)
+                grand_children = child.childCount()
+                if grand_children > 0:
+                    recurse(child)
+                elif(grand_children == 0 and child.text(0) == name and child.checkState(0) == Qt.Checked):
+                    child.setForeground(0,QtGui.QBrush(QtGui.QColor("green")))
+                    child.setFont(0, QtGui.QFont('Arial', 10))
+                else:
+                    child.setForeground(0,QtGui.QBrush(QtGui.QColor("white")))
+                    child.setFont(0, QtGui.QFont('Arial', 8))
         recurse(self.tree.invisibleRootItem())
     
     def listOfTest(self):
