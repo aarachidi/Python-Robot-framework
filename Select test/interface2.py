@@ -71,10 +71,8 @@ class Window(QtWidgets.QWidget):
                 child.setText(0, element)
                 child.setCheckState(0, Qt.Unchecked)
 
-
         self.tree.expandAll()
         self.tree.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-        #self.tree.installEventFilter(self)
         shorcut = QtWidgets.QShortcut(32, 
             self.tree, 
             context=QtCore.Qt.WidgetShortcut,
@@ -87,22 +85,22 @@ class Window(QtWidgets.QWidget):
         
 
         # Launch Button
-        pybutton = QtWidgets.QPushButton('Launch', self)
-        pybutton.resize(100, 60)
-        pybutton.clicked.connect(self.clickMethodLaunch)
-        grid.addWidget(pybutton, 7, 3)
+        self.pybutton = QtWidgets.QPushButton('Launch', self)
+        self.pybutton.resize(100, 60)
+        self.pybutton.clicked.connect(self.clickMethodLaunch)
+        grid.addWidget(self.pybutton, 7, 3)
 
         #Save Button
-        pybutton2 = QtWidgets.QPushButton('Save', self)
-        pybutton2.resize(100, 60)
-        grid.addWidget(pybutton2, 7, 5)
-        pybutton2.clicked.connect(self.clickMethodSave)
+        self.pybutton2 = QtWidgets.QPushButton('Save', self)
+        self.pybutton2.resize(100, 60)
+        grid.addWidget(self.pybutton2, 7, 5)
+        self.pybutton2.clicked.connect(self.clickMethodSave)
 
         #Load Button
-        pybutton3 = QtWidgets.QPushButton('Load', self)
-        pybutton3.resize(100, 60)
-        grid.addWidget(pybutton3, 7, 1)
-        pybutton3.clicked.connect(self.clickMethodLoad)
+        self.pybutton3 = QtWidgets.QPushButton('Load', self)
+        self.pybutton3.resize(100, 60)
+        grid.addWidget(self.pybutton3, 7, 1)
+        self.pybutton3.clicked.connect(self.clickMethodLoad)
 
         grid.setSpacing(50)
 
@@ -146,11 +144,20 @@ class Window(QtWidgets.QWidget):
 
         recurse(self.tree.invisibleRootItem())
             
+    def setWidgetDisabled(self):
+        self.pybutton.setEnabled(False)
+        self.pybutton2.setEnabled(False)
+        self.pybutton3.setEnabled(False)
+
+    def setWidgetEnabled(self):
+        self.pybutton.setEnabled(True)
+        self.pybutton2.setEnabled(True)
+        self.pybutton3.setEnabled(True)
 
     def clickMethodLaunch(self, event):
         dic = self.getCheckedItem()
         keys = dic.keys()
-        self.setEnabled(False)
+        self.setWidgetDisabled()
 
         current_path = getcwd()
         self.option['test'] = []
@@ -166,7 +173,7 @@ class Window(QtWidgets.QWidget):
         self.updateProgress(100)
         self.text.setText("")
         self.setInitialColor()
-        self.setEnabled(True)
+        self.setWidgetEnabled()
 
 
     def getCheckedItem(self):
@@ -228,9 +235,7 @@ class Window(QtWidgets.QWidget):
                         self.searchForItem(key, subElement)
     
     def updateProgress(self, value):
-        self.setEnabled(True)
         self.pbar.setValue(value)
-        self.setEnabled(False)
 
     def saveFileDialog(self):
         options = QtWidgets.QFileDialog.Options()
@@ -299,6 +304,7 @@ class Window(QtWidgets.QWidget):
             for i in range(parent_item.childCount()):
                 child = parent_item.child(i)
                 grand_children = child.childCount()
+                child.setDisabled(False)
                 if grand_children > 0:
                     recurse(child)
                 else:
@@ -311,6 +317,7 @@ class Window(QtWidgets.QWidget):
             for i in range(parent_item.childCount()):
                 child = parent_item.child(i)
                 grand_children = child.childCount()
+                child.setDisabled(True)
                 if grand_children > 0:
                     recurse(child)
                 elif(grand_children == 0 and child.text(0) == name and child.checkState(0) == Qt.Checked):

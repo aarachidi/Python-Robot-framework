@@ -14,3 +14,15 @@ testFunction
 testFunction2
     get_value_from_user     enter an input
     Pause Execution        Test is paused for now
+testFunction3
+    get_value_from_user     enter an input
+    Pause Execution        Test is paused for now
+testFunction4
+    get_value_from_user     enter an input
+    Pause Execution        Test is paused for now
+testFunction5
+    get_value_from_user     enter an input
+    Pause Execution        Test is paused for now
+testFunction6
+    get_value_from_user     enter an input
+    Pause Execution        Test is paused for now
