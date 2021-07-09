@@ -17,33 +17,26 @@ class listener:
     ROBOT_LISTENER_API_VERSION = 2
 
     def __init__(self, filename='listen.txt', obj=None):
-        outpath = os.path.join(tempfile.gettempdir(), filename)
-        self.outfile = open(outpath, 'w')
         self.obj = obj
         self.prog = obj.getCheckedItemCount()
-        self.prog = 100//self.prog
+        try:
+            self.prog = 100//self.prog
+        except:
+            self.prog = 0
 
     def start_suite(self, name, attrs):
-        self.outfile.write("%s '%s'\n" % (name, attrs['doc']))
+        a = 2
 
     def start_test(self, name, attrs):
         self.obj.text.setText("Test actuel : " + name)
-        self.obj.colorActuelTest(name)
-        tags = ' '.join(attrs['tags'])
-        self.outfile.write("- %s '%s' [ %s ] :: " % (name, attrs['doc'], tags))
+        self.obj.colorActuelTest(name, "actuel")
 
     def end_test(self, name, attrs):
         self.obj.updateProgress(self.obj.pbar.value() + self.prog)
-        if attrs['status'] == 'PASS':
-            self.outfile.write('PASS\n')
-        else:
-            self.outfile.write('FAIL: %s\n' % attrs['message'])
+        self.obj.colorActuelTest(name, attrs['status'])
 
     def end_suite(self, name, attrs):
-         self.outfile.write('%s\n%s\n' % (attrs['status'], attrs['message']))
-
-    def close(self):
-        self.outfile.close()
+        a = 4
 
 class TestCasesFinder(SuiteVisitor):
     def __init__(self):
@@ -313,7 +306,7 @@ class Window(QtWidgets.QWidget):
                     child.setFont(0, QtGui.QFont('Arial', 8))
         recurse(self.tree.invisibleRootItem())
     
-    def colorActuelTest(self, name):
+    def colorActuelTest(self, name, status):
         def recurse(parent_item):
             for i in range(parent_item.childCount()):
                 child = parent_item.child(i)
@@ -321,11 +314,14 @@ class Window(QtWidgets.QWidget):
                 if grand_children > 0:
                     recurse(child)
                 elif(grand_children == 0 and child.text(0) == name and child.checkState(0) == Qt.Checked):
-                    child.setForeground(0,QtGui.QBrush(QtGui.QColor("green")))
-                    child.setFont(0, QtGui.QFont('Arial', 10))
-                else:
-                    child.setForeground(0,QtGui.QBrush(QtGui.QColor("white")))
-                    child.setFont(0, QtGui.QFont('Arial', 8))
+                    if status == "actuel":
+                        child.setFont(0, QtGui.QFont('Arial', 12, QtGui.QFont.Bold))
+                    elif status == "PASS":
+                        child.setForeground(0,QtGui.QBrush(QtGui.QColor("green")))
+                        child.setFont(0, QtGui.QFont('Arial', 8))
+                    elif status == "FAIL":
+                        child.setForeground(0,QtGui.QBrush(QtGui.QColor("red")))
+                        child.setFont(0, QtGui.QFont('Arial', 8))
         recurse(self.tree.invisibleRootItem())
     
     def listOfTest(self):
@@ -368,4 +364,5 @@ window = Window()
 window.setWindowTitle('Robot Launcher')
 window.resize(600, 600)
 window.show()
+window.activateWindow()
 sys.exit(application.exec_())
