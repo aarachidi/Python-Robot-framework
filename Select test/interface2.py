@@ -10,7 +10,18 @@ from os import rename, remove, path, getcwd, chdir
 import ntpath
 import os
 import tempfile
+from robot.api import SuiteVisitor
+from robot.libraries.BuiltIn import BuiltIn
 
+
+class AbordTest(SuiteVisitor):
+
+    def __init__(self):
+        a = 3
+
+    def visit_test(self, test):
+        #print("t")
+        a = 2
 
 
 class listener:
@@ -19,16 +30,17 @@ class listener:
     def __init__(self, filename='listen.txt', obj=None):
         self.obj = obj
         self.prog = obj.getCheckedItemCount()
+        self.suite = ""
         try:
             self.prog = 100//self.prog
         except:
             self.prog = 0
 
     def start_suite(self, name, attrs):
-        a = 2
+        self.suite = name
 
     def start_test(self, name, attrs):
-        self.obj.text.setText("Test actuel : " + name)
+        self.obj.text.setText("Actual Suite Test : "+ self.suite+",   actual test : " + name)
         self.obj.colorActuelTest(name, "actuel")
 
     def end_test(self, name, attrs):
@@ -54,29 +66,16 @@ class Window(QtWidgets.QWidget):
 
         # List of tests
         self.path, self.option, self.data = self.listOfTest()
-        keys = self.data.keys()
 
         self.tree = QtWidgets.QTreeWidget(self)
         self.tree.setHeaderLabel("")
-        for key in keys:
-            parent = QtWidgets.QTreeWidgetItem(self.tree)
-            key_temp = ntpath.basename(key)
-            title = key_temp.replace(".robot", "")
-            parent.setText(0, title)
-            parent.setFlags(parent.flags() | Qt.ItemIsTristate |
-                            Qt.ItemIsUserCheckable)
-            for element in self.data[key]:
-                child = QtWidgets.QTreeWidgetItem(parent)
-                child.setFlags(child.flags() | Qt.ItemIsUserCheckable)
-                child.setText(0, element)
-                child.setCheckState(0, Qt.Unchecked)
-
-        self.tree.expandAll()
-        self.tree.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.createTreeItems()
         shorcut = QtWidgets.QShortcut(32, 
             self.tree, 
             context=QtCore.Qt.WidgetShortcut,
             activated=self.checkSelectedItem)
+
+        
 
         # Tree position
         self.tree.resize(500, 400)
@@ -88,19 +87,34 @@ class Window(QtWidgets.QWidget):
         self.pybutton = QtWidgets.QPushButton('Launch', self)
         self.pybutton.resize(100, 60)
         self.pybutton.clicked.connect(self.clickMethodLaunch)
-        grid.addWidget(self.pybutton, 7, 3)
+        self.pybutton.setEnabled(False)
+        grid.addWidget(self.pybutton, 8, 3)
+
 
         #Save Button
         self.pybutton2 = QtWidgets.QPushButton('Save', self)
         self.pybutton2.resize(100, 60)
-        grid.addWidget(self.pybutton2, 7, 5)
+        self.pybutton2.setEnabled(False)
         self.pybutton2.clicked.connect(self.clickMethodSave)
+        grid.addWidget(self.pybutton2, 8, 5)
 
         #Load Button
         self.pybutton3 = QtWidgets.QPushButton('Load', self)
         self.pybutton3.resize(100, 60)
-        grid.addWidget(self.pybutton3, 7, 1)
         self.pybutton3.clicked.connect(self.clickMethodLoad)
+        grid.addWidget(self.pybutton3, 8, 1)
+
+        #Select Suite Button
+        self.pybutton4 = QtWidgets.QPushButton('Choose Suite', self)
+        self.pybutton4.resize(100, 60)
+        self.pybutton4.clicked.connect(self.clickMethodSuite)
+        grid.addWidget(self.pybutton4, 7, 1)
+
+        #Abord Test Button
+        self.pybutton5 = QtWidgets.QPushButton('Abord', self)
+        self.pybutton5.resize(100, 60)
+        self.pybutton5.clicked.connect(self.abordTest)
+        grid.addWidget(self.pybutton5, 7, 3)
 
         grid.setSpacing(50)
 
@@ -120,7 +134,36 @@ class Window(QtWidgets.QWidget):
         grid.addWidget(self.config, 1, 1, 1, 5)
         self.setLayout(grid)
 
-    
+
+    def disableButton(self):
+        if(self.getCheckedItemCount() == 0):
+            self.pybutton.setEnabled(False)
+            self.pybutton2.setEnabled(False)
+        else:
+            self.pybutton.setEnabled(True)
+            self.pybutton2.setEnabled(True)
+
+    def createTreeItems(self):
+        keys = self.data.keys()
+        if len(keys) > 0:
+            self.tree.clear()
+        for key in keys:
+            parent = QtWidgets.QTreeWidgetItem(self.tree)
+            key_temp = ntpath.basename(key)
+            title = key_temp.replace(".robot", "")
+            parent.setText(0, title)
+            parent.setFlags(parent.flags() | Qt.ItemIsTristate |
+                            Qt.ItemIsUserCheckable)
+            for element in self.data[key]:
+                child = QtWidgets.QTreeWidgetItem(parent)
+                child.setFlags(child.flags() | Qt.ItemIsUserCheckable)
+                child.setText(0, element)
+                child.setCheckState(0, Qt.Unchecked)
+        self.tree.expandAll()
+        self.tree.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.tree.itemClicked.connect(self.disableButton)
+        self.tree.itemSelectionChanged.connect(self.disableButton)
+
     def checkSelectedItem(self):
         def recurse(parent_item):
             for i in range(parent_item.childCount()):
@@ -141,8 +184,8 @@ class Window(QtWidgets.QWidget):
                             child.setCheckState(0, Qt.Unchecked)
                         else:
                             child.setCheckState(0, Qt.Checked)
-
         recurse(self.tree.invisibleRootItem())
+        self.disableButton()
             
     def setWidgetDisabled(self):
         self.pybutton.setEnabled(False)
@@ -166,15 +209,37 @@ class Window(QtWidgets.QWidget):
         for key in keys:
             if len(dic[key]) != 0:
                 self.option['test'] += dic[key]
-        print(self.path)
         chdir(self.path)
-        run("./", **self.option, listener=listener(obj=self))
-        chdir(current_path)  
+        a = run("./", **self.option, listener=listener(obj=self), prerebotmodifier=AbordTest())
+        chdir(current_path)
         self.updateProgress(100)
         self.text.setText("")
         self.setInitialColor()
         self.setWidgetEnabled()
 
+    def abordTest(self):
+        try:
+            BuiltIn().run_keyword("Fatal Error")
+        except:
+            print("yes")
+        print('abord')
+
+    def clickMethodSuite(self):
+        file = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
+        path, dict_Option = self.listOfOption()
+        path = file
+        files = glob.glob(path+"/*.robot")
+        dict = {}
+        for file in files:
+            dict[file] = []
+            builder = TestSuiteBuilder()
+            testsuite = builder.build(file)
+            finder = TestCasesFinder()
+            testsuite.visit(finder)
+            for element in finder.tests:
+                dict[file].append(element.name)
+        self.path, self.option, self.data = path, dict_Option, dict
+        self.createTreeItems()
 
     def getCheckedItem(self):
         checked_items = []
@@ -369,7 +434,7 @@ class Window(QtWidgets.QWidget):
 application = QtWidgets.QApplication(sys.argv)
 window = Window()
 window.setWindowTitle('Robot Launcher')
-window.resize(600, 600)
+window.resize(800, 800)
 window.show()
 window.activateWindow()
 sys.exit(application.exec_())
