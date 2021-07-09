@@ -80,6 +80,13 @@ class Window(QtWidgets.QWidget):
 
 
         self.tree.expandAll()
+        self.tree.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        #self.tree.installEventFilter(self)
+        shorcut = QtWidgets.QShortcut(32, 
+            self.tree, 
+            context=QtCore.Qt.WidgetShortcut,
+            activated=self.checkSelectedItem)
+
         # Tree position
         self.tree.resize(500, 400)
         grid.addWidget(self.tree, 2, 1, 3, 5)
@@ -122,31 +129,52 @@ class Window(QtWidgets.QWidget):
         grid.addWidget(self.config, 1, 1, 1, 5)
         self.setLayout(grid)
 
+    
+    def checkSelectedItem(self):
+        def recurse(parent_item):
+            for i in range(parent_item.childCount()):
+                child = parent_item.child(i)
+                grand_children = child.childCount()
+                if grand_children > 0:
+                    if child.isSelected() == True:
+                        if child.checkState(0) == Qt.Checked:
+                            child.setCheckState(0, Qt.Unchecked)
+                        else:
+                            child.setCheckState(0, Qt.Checked)
+                    else:
+                        recurse(child)
+
+                else:
+                    if child.isSelected() == True:
+                        if child.checkState(0) == Qt.Checked:
+                            child.setCheckState(0, Qt.Unchecked)
+                        else:
+                            child.setCheckState(0, Qt.Checked)
+
+        recurse(self.tree.invisibleRootItem())
+            
+
     def clickMethodLaunch(self, event):
         dic = self.getCheckedItem()
         keys = dic.keys()
         self.setEnabled(False)
+
         current_path = getcwd()
         self.option['test'] = []
         self.pbar.setValue(0)
+
         for key in keys:
             if len(dic[key]) != 0:
-                chdir(self.path)
-                pa = key + ".robot"
-                self.option['test'] = dic[key]
-                run(pa, **self.option, listener=listener(obj=self))
-                if path.exists(key + ".html"):
-                    remove(key + ".html")
-                chdir(current_path)
-                if path.exists(key + ".html"):
-                    remove(key + ".html")
-                rename("report.html", self.path+"/" + key + ".html")
-                chdir(self.path)
+                self.option['test'] += dic[key]
+        print(self.path)
+        chdir(self.path)
+        run("./", **self.option, listener=listener(obj=self))
+        chdir(current_path)  
         self.updateProgress(100)
         self.text.setText("")
         self.setInitialColor()
-        chdir(current_path)
         self.setEnabled(True)
+
 
     def getCheckedItem(self):
         checked_items = []
@@ -334,9 +362,6 @@ class Window(QtWidgets.QWidget):
             if len(dict[key]) == 1:
                 dict[key] = dict[key][0]
         return path, dict
-
-
-
 
 application = QtWidgets.QApplication(sys.argv)
 window = Window()
