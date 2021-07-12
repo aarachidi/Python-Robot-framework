@@ -12,6 +12,8 @@ import os
 import tempfile
 from robot.api import SuiteVisitor
 from robot.libraries.BuiltIn import BuiltIn
+import threading
+import copy
 
 
 class AbordTest(SuiteVisitor):
@@ -23,6 +25,10 @@ class AbordTest(SuiteVisitor):
         #print("t")
         a = 2
 
+class RunP():
+    def runProc(self, option, pbar):
+        run("Select test", **option)
+        pbar.setValue(10)
 
 class listener:
     ROBOT_LISTENER_API_VERSION = 2
@@ -46,7 +52,6 @@ class listener:
     def end_test(self, name, attrs):
         self.obj.updateProgress(self.obj.pbar.value() + self.prog)
         self.obj.colorActuelTest(name, attrs['status'])
-        BuiltIn().run_keyword("Fatal Error")
 
     def end_suite(self, name, attrs):
         a = 4
@@ -57,7 +62,6 @@ class TestCasesFinder(SuiteVisitor):
 
     def visit_test(self, test):
         self.tests.append(test)
-        
 
 
 class Window(QtWidgets.QWidget):
@@ -69,6 +73,7 @@ class Window(QtWidgets.QWidget):
         # List of tests
         self.path, self.option, self.data = self.listOfTest()
         self.proc = None
+        self.runP = RunP()
 
         self.tree = QtWidgets.QTreeWidget(self)
         self.tree.setHeaderLabel("")
@@ -118,12 +123,6 @@ class Window(QtWidgets.QWidget):
         self.pybutton5.resize(100, 60)
         self.pybutton5.clicked.connect(self.abordTest)
         grid.addWidget(self.pybutton5, 7, 3)
-
-        #Open Report
-        self.pybutton6 = QtWidgets.QPushButton('Open report', self)
-        self.pybutton6.resize(100, 60)
-        self.pybutton6.clicked.connect(self.openReport)
-        grid.addWidget(self.pybutton6, 7, 5)
 
         grid.setSpacing(50)
 
@@ -200,11 +199,13 @@ class Window(QtWidgets.QWidget):
         self.pybutton.setEnabled(False)
         self.pybutton2.setEnabled(False)
         self.pybutton3.setEnabled(False)
+        self.pybutton4.setEnabled(False)
 
     def setWidgetEnabled(self):
         self.pybutton.setEnabled(True)
         self.pybutton2.setEnabled(True)
         self.pybutton3.setEnabled(True)
+        self.pybutton4.setEnabled(True)
 
     def clickMethodLaunch(self, event):
         dic = self.getCheckedItem()
@@ -218,17 +219,25 @@ class Window(QtWidgets.QWidget):
         for key in keys:
             if len(dic[key]) != 0:
                 self.option['test'] += dic[key]
-        chdir(self.path)
-        a = run("./", **self.option, listener=listener(obj=self))
-        chdir(current_path)
-        self.updateProgress(100)
-        self.text.setText("")
-        self.setInitialColor()
-        self.setWidgetEnabled()
+        #chdir(self.path)
+        listen = listener(obj = self)
+
+        self.proc = threading.Thread(target=self.runP.runProc, args=(self.option, self.pbar))
+        self.proc.start()
+        #a = run("./", **self.option, listener=listener(obj=self))
+        #chdir(current_path)
+        #self.updateProgress(100)
+        #self.text.setText("")
+        #self.setInitialColor()
+        #self.setWidgetEnabled()
+    
+    
 
     def abordTest(self):
+        print("here")
         try:
-            BuiltIn().run_keyword("Fatal Error")
+            print("abord")
+            self.proc.terminate()
         except:
             print("yes")
         print('abord')
@@ -290,9 +299,6 @@ class Window(QtWidgets.QWidget):
 
     def clickMethodLoad(self, event):
         self.openFileNameDialog()
-    
-    def openReport(self):
-        os.system("start " + "report.html")
 
     def keyPressEvent(self, event):
         if event.key() == 16777220:
@@ -443,10 +449,12 @@ class Window(QtWidgets.QWidget):
                 dict[key] = dict[key][0]
         return path, dict
 
-application = QtWidgets.QApplication(sys.argv)
-window = Window()
-window.setWindowTitle('Robot Launcher')
-window.resize(800, 800)
-window.show()
-window.activateWindow()
-sys.exit(application.exec_())
+
+if __name__ == "__main__":
+    application = QtWidgets.QApplication(sys.argv)
+    window = Window()
+    window.setWindowTitle('Robot Launcher')
+    window.resize(800, 800)
+    window.show()
+    window.activateWindow()
+    sys.exit(application.exec_())

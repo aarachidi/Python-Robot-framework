@@ -1,31 +1,63 @@
 import sys
 from robot import run
+from multiprocessing import Process
+from PyQt5 import QtWidgets, QtGui, QtCore
+from PyQt5.Qt import Qt
+from robot.libraries.BuiltIn import BuiltIn
+class run3:
+    def f(self):
+        run("bot2.robot")
+    
 
-def listOfOption():
-    dict = {}
-    i = 1
-    path = "./"
-    while(i < len(sys.argv)):
-        if(i < len(sys.argv) - 1):
-            key = sys.argv[i].strip("-")
-            try:
-                dict[key].append(sys.argv[i + 1])
-            except:
-                dict[key] = []
-                dict[key].append(sys.argv[i + 1])
-        elif(i == len(sys.argv) - 1):
-            path = sys.argv[i]
-        i += 2
-    keys = dict.keys()
-    for key in keys:
-        if len(dict[key]) == 1:
-            dict[key] = dict[key][0]
-    return path, dict
+class Window(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        super(Window, self).__init__(parent)
+        self.r = run3()
+        self.p = None
+        self.p2 = None
+        grid = QtWidgets.QGridLayout()
+        #Load Button
+        self.pybutton3 = QtWidgets.QPushButton('Load', self)
+        self.pybutton3.resize(100, 60)
+        self.pybutton3.clicked.connect(self.clickMethodLoad)
+        grid.addWidget(self.pybutton3, 1, 1)
+
+        #Abord Test Button
+        self.pybutton5 = QtWidgets.QPushButton('Abord', self)
+        self.pybutton5.resize(100, 60)
+        self.pybutton5.clicked.connect(self.abordTest)
+        grid.addWidget(self.pybutton5, 1, 3)
+        self.a = 0
+
+        self.setLayout(grid)
+    
+    def clickMethodLoad(self):
+        self.p = Process(target=self.r.f)
+        self.p.start()
+        
+    
+    def abordTest(self):
+        self.p.terminate()
+        print("can be done")
+
+
+if __name__ == "__main__":
+    #p = Process(target=f)
+    #p.start()
+    #p.join()
+
+    application = QtWidgets.QApplication(sys.argv)
+    window = Window()
+    window.setWindowTitle('Robot Launcher')
+    window.resize(800, 800)
+    window.show()
+    window.activateWindow()
+    sys.exit(application.exec_())
+
+
 dict1 = {
     "name" : "exemple",
     "test" : "test Function"
 }
-path , dict = listOfOption()
-print(path)
 
 #run("bot.robot", **dict)
