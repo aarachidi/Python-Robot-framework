@@ -12,6 +12,9 @@ import os
 import tempfile
 from robot.api import SuiteVisitor
 from robot.libraries.BuiltIn import BuiltIn
+import signal
+from robot.api import logger
+import _thread
 
 
 class AbordTest(SuiteVisitor):
@@ -46,7 +49,7 @@ class listener:
     def end_test(self, name, attrs):
         self.obj.updateProgress(self.obj.pbar.value() + self.prog)
         self.obj.colorActuelTest(name, attrs['status'])
-        BuiltIn().run_keyword("Fatal Error")
+
 
     def end_suite(self, name, attrs):
         a = 4
@@ -63,7 +66,6 @@ class TestCasesFinder(SuiteVisitor):
 class Window(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(Window, self).__init__(parent)
-
         grid = QtWidgets.QGridLayout()
 
         # List of tests
@@ -219,7 +221,7 @@ class Window(QtWidgets.QWidget):
             if len(dic[key]) != 0:
                 self.option['test'] += dic[key]
         chdir(self.path)
-        a = run("./", **self.option, listener=listener(obj=self))
+        run("./", **self.option, listener=listener(obj=self))
         chdir(current_path)
         self.updateProgress(100)
         self.text.setText("")

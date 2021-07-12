@@ -12,7 +12,7 @@ import os
 import tempfile
 from robot.api import SuiteVisitor
 from robot.libraries.BuiltIn import BuiltIn
-import threading
+from multiprocessing import Process
 import copy
 
 
@@ -222,7 +222,7 @@ class Window(QtWidgets.QWidget):
         #chdir(self.path)
         listen = listener(obj = self)
 
-        self.proc = threading.Thread(target=self.runP.runProc, args=(self.option, self.pbar))
+        self.proc = Process(target=self.runP.runProc, args=(self.option, self.pbar))
         self.proc.start()
         #a = run("./", **self.option, listener=listener(obj=self))
         #chdir(current_path)
