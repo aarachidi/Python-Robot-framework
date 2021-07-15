@@ -14,17 +14,8 @@ from robot.api import SuiteVisitor
 from robot.libraries.BuiltIn import BuiltIn
 import signal
 from robot.api import logger
-import _thread
-
-
-class AbordTest(SuiteVisitor):
-
-    def __init__(self):
-        a = 3
-
-    def visit_test(self, test):
-        #print("t")
-        a = 2
+from robot.running.signalhandler import STOP_SIGNAL_MONITOR
+import signal
 
 
 class listener:
@@ -70,7 +61,6 @@ class Window(QtWidgets.QWidget):
 
         # List of tests
         self.path, self.option, self.data = self.listOfTest()
-        self.proc = None
 
         self.tree = QtWidgets.QTreeWidget(self)
         self.tree.setHeaderLabel("")
@@ -120,6 +110,7 @@ class Window(QtWidgets.QWidget):
         self.pybutton5.resize(100, 60)
         self.pybutton5.clicked.connect(self.abordTest)
         grid.addWidget(self.pybutton5, 7, 3)
+        self.pybutton5.setEnabled(False)
 
         #Open Report
         self.pybutton6 = QtWidgets.QPushButton('Open report', self)
@@ -202,11 +193,15 @@ class Window(QtWidgets.QWidget):
         self.pybutton.setEnabled(False)
         self.pybutton2.setEnabled(False)
         self.pybutton3.setEnabled(False)
+        self.pybutton4.setEnabled(False)
+        self.pybutton5.setEnabled(True)
 
     def setWidgetEnabled(self):
         self.pybutton.setEnabled(True)
         self.pybutton2.setEnabled(True)
         self.pybutton3.setEnabled(True)
+        self.pybutton4.setEnabled(True)
+        self.pybutton5.setEnabled(False)
 
     def clickMethodLaunch(self, event):
         dic = self.getCheckedItem()
@@ -230,10 +225,9 @@ class Window(QtWidgets.QWidget):
 
     def abordTest(self):
         try:
-            BuiltIn().run_keyword("Fatal Error")
+            STOP_SIGNAL_MONITOR(signal.SIGINT, None)
         except:
-            print("yes")
-        print('abord')
+            pass
 
     def clickMethodSuite(self):
         file = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
@@ -444,6 +438,7 @@ class Window(QtWidgets.QWidget):
             if len(dict[key]) == 1:
                 dict[key] = dict[key][0]
         return path, dict
+
 
 application = QtWidgets.QApplication(sys.argv)
 window = Window()

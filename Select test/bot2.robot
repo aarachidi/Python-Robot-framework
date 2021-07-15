@@ -7,5 +7,4 @@ Metadata         --name    Dialogs
 
 *** Test Cases ***
 test2 Function
-    ${a}=    get_value_from_user     enter an input
-    Pause Execution        Test is paused for now
+    Sleep    15s

@@ -12,23 +12,20 @@ import os
 import tempfile
 from robot.api import SuiteVisitor
 from robot.libraries.BuiltIn import BuiltIn
-from multiprocessing import Process
-import copy
+from PyQt5.QtCore import QThread, pyqtSignal
+from robot.running.signalhandler import STOP_SIGNAL_MONITOR
+import signal
 
 
-class AbordTest(SuiteVisitor):
-
+class AnotherWindow(QtWidgets.QWidget):
+    
     def __init__(self):
-        a = 3
+        super(AnotherWindow, self).__init__()
+        layout = QtWidgets.QVBoxLayout()
+        self.label = QtWidgets.QLabel("Another Window")
+        layout.addWidget(self.label)
+        self.setLayout(layout)
 
-    def visit_test(self, test):
-        #print("t")
-        a = 2
-
-class RunP():
-    def runProc(self, option, pbar):
-        run("Select test", **option)
-        pbar.setValue(10)
 
 class listener:
     ROBOT_LISTENER_API_VERSION = 2
@@ -36,6 +33,7 @@ class listener:
     def __init__(self, filename='listen.txt', obj=None):
         self.obj = obj
         self.prog = obj.getCheckedItemCount()
+        self.counter = 0
         self.suite = ""
         try:
             self.prog = 100//self.prog
@@ -52,6 +50,11 @@ class listener:
     def end_test(self, name, attrs):
         self.obj.updateProgress(self.obj.pbar.value() + self.prog)
         self.obj.colorActuelTest(name, attrs['status'])
+    
+    def end_keyword(self, name, attrs):
+        if(self.obj.counter == 1):
+            self.obj.counter += 1
+            STOP_SIGNAL_MONITOR(signal.SIGINT, None)
 
     def end_suite(self, name, attrs):
         a = 4
@@ -72,8 +75,8 @@ class Window(QtWidgets.QWidget):
 
         # List of tests
         self.path, self.option, self.data = self.listOfTest()
-        self.proc = None
-        self.runP = RunP()
+        self.get_thread = None
+        self.counter = 0
 
         self.tree = QtWidgets.QTreeWidget(self)
         self.tree.setHeaderLabel("")
@@ -123,6 +126,8 @@ class Window(QtWidgets.QWidget):
         self.pybutton5.resize(100, 60)
         self.pybutton5.clicked.connect(self.abordTest)
         grid.addWidget(self.pybutton5, 7, 3)
+        self.pybutton5.setEnabled(False)
+
 
         grid.setSpacing(50)
 
@@ -200,12 +205,14 @@ class Window(QtWidgets.QWidget):
         self.pybutton2.setEnabled(False)
         self.pybutton3.setEnabled(False)
         self.pybutton4.setEnabled(False)
+        self.pybutton5.setEnabled(True)
 
     def setWidgetEnabled(self):
         self.pybutton.setEnabled(True)
         self.pybutton2.setEnabled(True)
         self.pybutton3.setEnabled(True)
         self.pybutton4.setEnabled(True)
+        self.pybutton5.setEnabled(False)
 
     def clickMethodLaunch(self, event):
         dic = self.getCheckedItem()
@@ -219,28 +226,27 @@ class Window(QtWidgets.QWidget):
         for key in keys:
             if len(dic[key]) != 0:
                 self.option['test'] += dic[key]
-        #chdir(self.path)
-        listen = listener(obj = self)
-
-        self.proc = Process(target=self.runP.runProc, args=(self.option, self.pbar))
-        self.proc.start()
-        #a = run("./", **self.option, listener=listener(obj=self))
-        #chdir(current_path)
-        #self.updateProgress(100)
-        #self.text.setText("")
-        #self.setInitialColor()
-        #self.setWidgetEnabled()
+        chdir(self.path)
+        a = run("./", **self.option, listener=listener(obj=self))
+        chdir(current_path)
+        self.updateProgress(100)
+        self.text.setText("")
+        self.setInitialColor()
+        self.setWidgetEnabled()
     
     
 
     def abordTest(self):
-        print("here")
+        # args = sys.argv[:]  # get shallow copy of running script args
+        # args.insert(0, sys.executable)  # give it the executable
+        # sys.stdout.flush()
+        # os.execv(sys.executable, args)
         try:
-            print("abord")
-            self.proc.terminate()
+            STOP_SIGNAL_MONITOR(signal.SIGINT, None)
         except:
-            print("yes")
-        print('abord')
+            pass
+        #self.counter += 1
+        
 
     def clickMethodSuite(self):
         file = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
