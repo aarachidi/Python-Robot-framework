@@ -134,12 +134,13 @@ class Window(QtWidgets.QWidget):
         grid.addWidget(self.config, 1, 1, 1, 5)
         self.setLayout(grid)
 
-		self.testsuite_running = False
+        self.testsuite_running = False
         self.loadBackUp()
 
 
     def loadBackUp(self):
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
+        print("Loading backup configuration from : " + pa)
         if os.path.exists(pa):
             dic = self.readFromXmlFile(pa)
             if(len(dic.keys()) > 0):
