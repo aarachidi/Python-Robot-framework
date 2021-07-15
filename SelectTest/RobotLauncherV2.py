@@ -56,7 +56,7 @@ class Window(QtWidgets.QWidget):
         super(Window, self).__init__(parent)
         grid = QtWidgets.QGridLayout()
 
-        self.relaunch = False
+        
         # List of tests
         self.path, self.option, self.data = self.listOfTest()
 
@@ -134,15 +134,20 @@ class Window(QtWidgets.QWidget):
         grid.addWidget(self.config, 1, 1, 1, 5)
         self.setLayout(grid)
 
-        if os.path.exists("backup.xml"):
-            dic = self.readFromXmlFile("backup.xml")
+        self.loadBackUp()
+
+
+    def loadBackUp(self):
+        pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
+        if os.path.exists(pa):
+            dic = self.readFromXmlFile(pa)
             if(len(dic.keys()) > 0):
                 self.unckeckAll()
             for key in dic.keys():
                 if(len(dic[key]) > 0):
                     for subElement in dic[key]:
                         self.searchForItem(key, subElement)
-
+            self.disableButton()
 
     def disableButton(self):
         if(self.getCheckedItemCount() == 0):
@@ -222,18 +227,13 @@ class Window(QtWidgets.QWidget):
         for key in keys:
             if len(dic[key]) != 0:
                 self.option['test'] += dic[key]
+        dic = self.getCheckedItem()
+        pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
+        self.createXMLFile(dic, pa)
+        STOP_SIGNAL_MONITOR.__init__() 
         chdir(self.path)
         run("./", **self.option, listener=listener(obj=self))
         chdir(current_path)
-        if self.relaunch == True:
-            dic = self.getCheckedItem()
-            self.createXMLFile(dic, "backup.xml")
-            args = sys.argv[:]  # get shallow copy of running script args
-            args.insert(0, sys.executable)  # give it the executable
-            sys.stdout.flush()
-            os.execv(sys.executable, args)
-        if os.path.exists("backup.xml"):
-            os.remove("backup.xml")
         self.updateProgress(100)
         self.text.setText("")
         self.setInitialColor()
@@ -244,9 +244,11 @@ class Window(QtWidgets.QWidget):
             STOP_SIGNAL_MONITOR(signal.SIGINT, None)
         except:
             pass
-        self.relaunch = True
 
     def clickMethodSuite(self):
+        dic = self.getCheckedItem()
+        pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
+        self.createXMLFile(dic, pa)
         file = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
         path, dict_Option = self.listOfOption()
         path = file
@@ -262,6 +264,8 @@ class Window(QtWidgets.QWidget):
                 dict[file].append(element.name)
         self.path, self.option, self.data = path, dict_Option, dict
         self.createTreeItems()
+
+        self.loadBackUp()
 
     def getCheckedItem(self):
         checked_items = []
