@@ -9,11 +9,8 @@ import xml.etree.ElementTree as ET
 from os import rename, remove, path, getcwd, chdir
 import ntpath
 import os
-import tempfile
 from robot.api import SuiteVisitor
-from robot.libraries.BuiltIn import BuiltIn
 import signal
-from robot.api import logger
 from robot.running.signalhandler import STOP_SIGNAL_MONITOR
 import signal
 
@@ -59,6 +56,7 @@ class Window(QtWidgets.QWidget):
         super(Window, self).__init__(parent)
         grid = QtWidgets.QGridLayout()
 
+        
         # List of tests
         self.path, self.option, self.data = self.listOfTest()
 
@@ -70,10 +68,13 @@ class Window(QtWidgets.QWidget):
             context=QtCore.Qt.WidgetShortcut,
             activated=self.checkSelectedItem)
 
+        
+
         # Tree position
         self.tree.resize(500, 400)
         grid.addWidget(self.tree, 2, 1, 3, 5)
         self.tree.setColumnWidth(0, 400)
+        
 
         # Launch Button
         self.pybutton = QtWidgets.QPushButton('Launch', self)
@@ -133,8 +134,21 @@ class Window(QtWidgets.QWidget):
         grid.addWidget(self.config, 1, 1, 1, 5)
         self.setLayout(grid)
 
-        self.testsuite_running = False
+		self.testsuite_running = False
+        self.loadBackUp()
 
+
+    def loadBackUp(self):
+        pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
+        if os.path.exists(pa):
+            dic = self.readFromXmlFile(pa)
+            if(len(dic.keys()) > 0):
+                self.unckeckAll()
+            for key in dic.keys():
+                if(len(dic[key]) > 0):
+                    for subElement in dic[key]:
+                        self.searchForItem(key, subElement)
+            self.disableButton()
 
     def disableButton(self):
         if(self.getCheckedItemCount() == 0):
@@ -214,6 +228,9 @@ class Window(QtWidgets.QWidget):
         for key in keys:
             if len(dic[key]) != 0:
                 self.option['test'] += dic[key]
+        dic = self.getCheckedItem()
+        pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
+        self.createXMLFile(dic, pa)
         chdir(self.path)
 
         STOP_SIGNAL_MONITOR.__init__()
@@ -227,12 +244,15 @@ class Window(QtWidgets.QWidget):
         self.setWidgetEnabled()
 
     def abordTest(self):
-        try :
-            STOP_SIGNAL_MONITOR(signal.SIGTERM, None)
-        except :
+        try:
+            STOP_SIGNAL_MONITOR(signal.SIGINT, None)
+        except:
             pass
 
     def clickMethodSuite(self):
+        dic = self.getCheckedItem()
+        pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
+        self.createXMLFile(dic, pa)
         file = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
         path, dict_Option = self.listOfOption()
         path = file
@@ -249,6 +269,7 @@ class Window(QtWidgets.QWidget):
         self.path, self.option, self.data = path, dict_Option, dict
         self.createTreeItems()
 
+        self.loadBackUp()
     def getCheckedItem(self):
         checked_items = []
         dic = {}
