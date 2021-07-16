@@ -49,6 +49,7 @@ class listener:
         self.obj = obj
         self.prog = obj.getCheckedItemCount()
         self.suite = ""
+        self.clicked = False
         try:
             self.prog = 100//self.prog
         except:
@@ -62,6 +63,10 @@ class listener:
         self.obj.colorActuelTest(name, "actuel")
 
     def end_test(self, name, attrs):
+        if self.obj.checkBox.isChecked :
+            if attrs['status'] == "FAIL" and self.clicked == False:
+                self.clicked = True
+                self.obj.abordTest()
         self.obj.updateProgress(self.obj.pbar.value() + self.prog)
         self.obj.colorActuelTest(name, attrs['status'])
 
@@ -110,7 +115,7 @@ class Window(QtWidgets.QWidget):
         self.pybutton.resize(100, 60)
         self.pybutton.clicked.connect(self.clickMethodLaunch)
         self.pybutton.setEnabled(False)
-        grid.addWidget(self.pybutton, 8, 3)
+        grid.addWidget(self.pybutton, 9, 3)
 
 
         #Save Button
@@ -118,50 +123,55 @@ class Window(QtWidgets.QWidget):
         self.pybutton2.resize(100, 60)
         self.pybutton2.setEnabled(False)
         self.pybutton2.clicked.connect(self.clickMethodSave)
-        grid.addWidget(self.pybutton2, 8, 5)
+        grid.addWidget(self.pybutton2, 9, 5)
 
         #Load Button
         self.pybutton3 = QtWidgets.QPushButton('Load', self)
         self.pybutton3.resize(100, 60)
         self.pybutton3.clicked.connect(self.clickMethodLoad)
-        grid.addWidget(self.pybutton3, 8, 1)
+        grid.addWidget(self.pybutton3, 9, 1)
 
         #Select Suite Button
         self.pybutton4 = QtWidgets.QPushButton('Choose Suite', self)
         self.pybutton4.resize(100, 60)
         self.pybutton4.clicked.connect(self.clickMethodSuite)
-        grid.addWidget(self.pybutton4, 7, 1)
+        grid.addWidget(self.pybutton4, 8, 1)
 
         #Abord Test Button
         self.pybutton5 = QtWidgets.QPushButton('Abord', self)
         self.pybutton5.resize(100, 60)
         self.pybutton5.clicked.connect(self.abordTest)
-        grid.addWidget(self.pybutton5, 7, 3)
+        grid.addWidget(self.pybutton5, 8, 3)
         self.pybutton5.setEnabled(False)
 
         #Open Report
         self.pybutton6 = QtWidgets.QPushButton('Open report', self)
         self.pybutton6.resize(100, 60)
         self.pybutton6.clicked.connect(self.openReport)
-        grid.addWidget(self.pybutton6, 7, 5)
+        grid.addWidget(self.pybutton6, 8, 5)
 
         grid.setSpacing(50)
 
         #Progress bar
         self.pbar = QtWidgets.QProgressBar(self)
         self.pbar.resize(300, 30)
-        grid.addWidget(self.pbar, 5, 1, 1, 5)
+        grid.addWidget(self.pbar, 6, 1, 1, 5)
 
         #Text of current test
         self.text = QtWidgets.QLabel(text="")
         self.text.setFont(QtGui.QFont('Helvetica font', 20))
-        grid.addWidget(self.text, 6, 1, 1, 5)
+        grid.addWidget(self.text, 7, 1, 1, 5)
 
         #Text of current config file
         self.config = QtWidgets.QLabel(text="")
         self.config.setFont(QtGui.QFont('Helvetica font', 13))
         grid.addWidget(self.config, 1, 1, 1, 5)
         self.setLayout(grid)
+
+        #CheckBox for exit if test fail
+        self.checkBox = QtWidgets.QCheckBox(self)
+        self.checkBox.setText("Exit on first fail")
+        grid.addWidget(self.checkBox, 5, 5, 1, 1)
 
         self.tree.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
 
@@ -504,7 +514,7 @@ class Window(QtWidgets.QWidget):
 application = QtWidgets.QApplication(sys.argv)
 window = Window()
 window.setWindowTitle('Robot Launcher')
-window.resize(800, 800)
+window.resize(800, 900)
 window.show()
 window.activateWindow()
 sys.exit(application.exec_())

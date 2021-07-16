@@ -164,9 +164,21 @@ class Window(QtWidgets.QWidget):
         self.setLayout(grid)
 
         self.tree.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
+        self.tree.setDragEnabled(True)
+        self.tree.setDropIndicatorShown(True)
 
         self.loadBackUp()
 
+    def startDrag(self, actions):
+        items = self.selectedItems()
+        self._dragroot = self.itemRootIndex(items and items[0])
+        QtWidgets.QTreeWidget.startDrag(self, actions)
+
+    def dragEnterEvent(self, event):
+        self._drag_event(event, True)
+
+    def dragMoveEvent(self, event):
+        self._drag_event(event, False)
 
     def loadBackUp(self):
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
@@ -208,6 +220,7 @@ class Window(QtWidgets.QWidget):
         self.tree.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.tree.itemClicked.connect(self.disableButton)
         self.tree.itemSelectionChanged.connect(self.disableButton)
+
 
     def checkSelectedItem(self):
         def recurse(parent_item):
