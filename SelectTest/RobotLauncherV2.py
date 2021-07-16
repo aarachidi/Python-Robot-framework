@@ -296,7 +296,6 @@ class Window(QtWidgets.QWidget):
                 dict[file].append(element.name)
         self.path, self.option, self.data = path, dict_Option, dict
         self.createTreeItems()
-        self.loadBackUp()
 
     def getCheckedItem(self):
         checked_items = []
