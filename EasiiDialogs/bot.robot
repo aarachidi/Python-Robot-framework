@@ -34,7 +34,6 @@ Del init
     UserMesures.close
 *** Test Cases ***
 test Function
-    Pause Execution
     init
     Style       mincho       15
     Label    name:        achraf

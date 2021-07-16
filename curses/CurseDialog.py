@@ -15,7 +15,7 @@ class CurseDialog():
 
     def do(self, stdscr):
         curses.curs_set(0)
-        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
+        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_GREEN)
         self.print_center(stdscr, self.inputs, self.index_vert)
         self.getInput(stdscr)
     
@@ -70,8 +70,8 @@ class CurseDialog():
             i += 1
         if(index_vert == i):
             stdscr.attron(curses.color_pair(1))
-            stdscr.addstr(h//2 + i + 4, w//2 - 2, "Validate")
+            stdscr.addstr(h//2 + i + 4, w//2 - 2, "Validate", curses.A_BOLD | curses.color_pair(1))
             stdscr.attroff(curses.color_pair(1))
         else:
-            stdscr.addstr(h//2 + i + 4, w//2 - 2, "Validate")
+            stdscr.addstr(h//2 + i + 4, w//2 - 2, "Validate", curses.A_BOLD)
         stdscr.refresh()

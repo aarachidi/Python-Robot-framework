@@ -15,6 +15,24 @@ from robot.running.signalhandler import STOP_SIGNAL_MONITOR
 import signal
 
 
+class OrderTest(SuiteVisitor):
+
+    def __init__(self, obj):
+        self.obj = obj
+        
+
+    def start_suite(self, suite):
+        """Remove tests that match the given pattern."""
+        arr = []
+        for element in self.obj.option['test']:
+            for el in suite.tests:
+                if(el.name == element):
+                    arr.append(el)
+        suite.tests = arr
+
+
+
+
 class listener:
     ROBOT_LISTENER_API_VERSION = 2
 
@@ -59,6 +77,8 @@ class Window(QtWidgets.QWidget):
         
         # List of tests
         self.path, self.option, self.data = self.listOfTest()
+
+        
 
         self.tree = QtWidgets.QTreeWidget(self)
         self.tree.setHeaderLabel("")
@@ -133,6 +153,8 @@ class Window(QtWidgets.QWidget):
         self.config.setFont(QtGui.QFont('Helvetica font', 13))
         grid.addWidget(self.config, 1, 1, 1, 5)
         self.setLayout(grid)
+
+        self.tree.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
 
         self.loadBackUp()
 
@@ -232,7 +254,7 @@ class Window(QtWidgets.QWidget):
         self.createXMLFile(dic, pa)
         STOP_SIGNAL_MONITOR.__init__() 
         chdir(self.path)
-        run("./", **self.option, listener=listener(obj=self))
+        run("./", **self.option, listener=listener(obj=self), prerunmodifier=OrderTest(self))
         chdir(current_path)
         self.updateProgress(100)
         self.text.setText("")
@@ -250,6 +272,10 @@ class Window(QtWidgets.QWidget):
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
         self.createXMLFile(dic, pa)
         file = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
+        self.createTree(file)
+        print(self.path)
+
+    def createTree(self, file):
         path, dict_Option = self.listOfOption()
         path = file
         files = glob.glob(path+"/*.robot")
@@ -265,7 +291,6 @@ class Window(QtWidgets.QWidget):
         self.path, self.option, self.data = path, dict_Option, dict
         self.createTreeItems()
 
-        self.loadBackUp()
 
     def getCheckedItem(self):
         checked_items = []
@@ -344,6 +369,7 @@ class Window(QtWidgets.QWidget):
     def createXMLFile(self, dic, path):
         keys = dic.keys()
         data = ET.Element('Tests')
+        data.set('path', self.path)
         for key in keys:
             testName = ET.SubElement(data, "Test")
             testName.set('name',key)
@@ -364,6 +390,7 @@ class Window(QtWidgets.QWidget):
                 dic[elem.attrib['name']] = []
                 for subelem in elem:
                     dic[elem.attrib['name']].append(subelem.attrib['name'])
+            self.createTree(root.attrib['path'])
         except:
             dic = {}
             msg = QtWidgets.QMessageBox()

@@ -7,4 +7,4 @@ Metadata         --name    Dialogs
 
 *** Test Cases ***
 test2 Function
-    Sleep    15s
+    Sleep    5s

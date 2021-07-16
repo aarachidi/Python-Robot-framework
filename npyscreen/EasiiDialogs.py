@@ -67,7 +67,7 @@ class EasiiDialogs(object):
         varEntry.trace("w", lambda name, index, mode, \
             varEntry=varEntry, max=int(max), min=int(min), entry=entry1, nm=name: \
                 self.eventHandlerEntry(varEntry, max, min, entry, nm ))
-        self.result[name] = ""
+        self.result[name] = default
         self.gridRow += 1
         entry1.bind("<FocusIn>", self.selectEntry)
 
