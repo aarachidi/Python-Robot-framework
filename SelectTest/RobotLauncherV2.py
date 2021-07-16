@@ -159,6 +159,12 @@ class Window(QtWidgets.QWidget):
         self.pybutton6.clicked.connect(self.openReport)
         grid.addWidget(self.pybutton6, 9, 5)
 
+        #Select/Unselect All
+        self.pybutton7 = QtWidgets.QPushButton('Select/Unselect All', self)
+        self.pybutton7.resize(100, 60)
+        self.pybutton7.clicked.connect(self.checkOrUncheckAllButton)
+        grid.addWidget(self.pybutton7, 9, 1)
+
         grid.setSpacing(50)
 
         #Progress bar
@@ -273,6 +279,14 @@ class Window(QtWidgets.QWidget):
         self.pybutton4.setEnabled(True)
         self.pybutton5.setEnabled(False)
 
+    def checkOrUncheckAllButton(self):
+        a = self.getUncheckedItemCount()
+        if(a == 0):
+            self.checkOrUncheckAll("uncheck")
+        else:
+            self.checkOrUncheckAll("check")
+        self.disableButton()
+
     def clickMethodLaunch(self, event):
         dic = self.getCheckedItem()
         keys = dic.keys()
@@ -374,6 +388,22 @@ class Window(QtWidgets.QWidget):
                     recurse(child)
 
                 if child.checkState(0) == Qt.Checked and grand_children == 0:
+                    dic['count'] += 1
+        recurse(self.tree.invisibleRootItem())
+        return dic['count']
+    
+    def getUncheckedItemCount(self):
+        dic = {}
+        dic['count'] = 0
+
+        def recurse(parent_item):
+            for i in range(parent_item.childCount()):
+                child = parent_item.child(i)
+                grand_children = child.childCount()
+                if grand_children > 0:
+                    recurse(child)
+
+                if child.checkState(0) == Qt.Unchecked and grand_children == 0:
                     dic['count'] += 1
         recurse(self.tree.invisibleRootItem())
         return dic['count']
