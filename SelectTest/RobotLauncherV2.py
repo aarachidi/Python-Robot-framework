@@ -106,7 +106,7 @@ class Window(QtWidgets.QWidget):
 
         # Tree position
         self.tree.resize(500, 400)
-        grid.addWidget(self.tree, 2, 1, 3, 5)
+        grid.addWidget(self.tree, 2, 1, 4, 5)
         self.tree.setColumnWidth(0, 400)
         
 
@@ -115,7 +115,7 @@ class Window(QtWidgets.QWidget):
         self.pybutton.resize(100, 60)
         self.pybutton.clicked.connect(self.clickMethodLaunch)
         self.pybutton.setEnabled(False)
-        grid.addWidget(self.pybutton, 9, 3)
+        grid.addWidget(self.pybutton, 10, 3)
 
 
         #Save Button
@@ -123,55 +123,61 @@ class Window(QtWidgets.QWidget):
         self.pybutton2.resize(100, 60)
         self.pybutton2.setEnabled(False)
         self.pybutton2.clicked.connect(self.clickMethodSave)
-        grid.addWidget(self.pybutton2, 9, 5)
+        grid.addWidget(self.pybutton2, 10, 5)
 
         #Load Button
         self.pybutton3 = QtWidgets.QPushButton('Load', self)
         self.pybutton3.resize(100, 60)
         self.pybutton3.clicked.connect(self.clickMethodLoad)
-        grid.addWidget(self.pybutton3, 9, 1)
+        grid.addWidget(self.pybutton3, 10, 1)
 
         #Select Suite Button
         self.pybutton4 = QtWidgets.QPushButton('Choose Suite', self)
         self.pybutton4.resize(100, 60)
         self.pybutton4.clicked.connect(self.clickMethodSuite)
-        grid.addWidget(self.pybutton4, 8, 1)
+        grid.addWidget(self.pybutton4, 9, 1)
 
         #Abord Test Button
         self.pybutton5 = QtWidgets.QPushButton('Abord', self)
         self.pybutton5.resize(100, 60)
         self.pybutton5.clicked.connect(self.abordTest)
-        grid.addWidget(self.pybutton5, 8, 3)
+        grid.addWidget(self.pybutton5, 9, 3)
         self.pybutton5.setEnabled(False)
 
         #Open Report
         self.pybutton6 = QtWidgets.QPushButton('Open report', self)
         self.pybutton6.resize(100, 60)
         self.pybutton6.clicked.connect(self.openReport)
-        grid.addWidget(self.pybutton6, 8, 5)
+        grid.addWidget(self.pybutton6, 9, 5)
 
         grid.setSpacing(50)
 
         #Progress bar
         self.pbar = QtWidgets.QProgressBar(self)
         self.pbar.resize(300, 30)
-        grid.addWidget(self.pbar, 6, 1, 1, 5)
+        grid.addWidget(self.pbar, 7, 1, 1, 5)
 
         #Text of current test
         self.text = QtWidgets.QLabel(text="")
         self.text.setFont(QtGui.QFont('Helvetica font', 20))
-        grid.addWidget(self.text, 7, 1, 1, 5)
+        grid.addWidget(self.text, 8, 1, 1, 5)
 
         #Text of current config file
         self.config = QtWidgets.QLabel(text="")
         self.config.setFont(QtGui.QFont('Helvetica font', 13))
-        grid.addWidget(self.config, 1, 1, 1, 5)
+        grid.addWidget(self.config, 0, 1, 1, 5)
+        self.setLayout(grid)
+
+        #Text of Suite path
+        self.testPath = QtWidgets.QLabel(text="Suite Path : " + self.path)
+        self.testPath.setFont(QtGui.QFont('Helvetica font', 13))
+        grid.addWidget(self.testPath , 1, 1, 1, 4)
         self.setLayout(grid)
 
         #CheckBox for exit if test fail
         self.checkBox = QtWidgets.QCheckBox(self)
         self.checkBox.setText("Exit on first fail")
-        grid.addWidget(self.checkBox, 5, 5, 1, 1)
+        grid.addWidget(self.checkBox, 6, 5, 1, 1)
 
         self.tree.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
 
@@ -313,6 +319,7 @@ class Window(QtWidgets.QWidget):
             for element in finder.tests:
                 dict[file].append(element.name)
         self.path, self.option, self.data = path, dict_Option, dict
+        self.testPath.setText("Suite Path : " + self.path)
         self.createTreeItems()
 
     def getCheckedItem(self):
