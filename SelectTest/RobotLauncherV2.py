@@ -80,7 +80,25 @@ class TestCasesFinder(SuiteVisitor):
 
     def visit_test(self, test):
         self.tests.append(test)
-        
+
+class myTree(QtWidgets.QTreeWidget):
+    def __init__(self, parent=None):
+        QtWidgets.QTreeWidget.__init__(self, parent)
+        self.setDragDropMode(self.InternalMove)
+        self.setDragEnabled(True)
+        self.setDropIndicatorShown(True)
+    
+    def dragEnterEvent(self, event):
+        item = self.itemAt(event.pos())
+        QtWidgets.QTreeWidget.dragEnterEvent(self, event)
+
+    def dragMoveEvent(self, event):
+        item = self.itemAt(event.pos())
+        QtWidgets.QTreeWidget.dragMoveEvent(self, event)
+    
+    def dropEvent(self, event):
+        item = self.itemAt(event.pos())
+        return super().dropEvent(event)
 
 
 class Window(QtWidgets.QWidget):
@@ -94,7 +112,7 @@ class Window(QtWidgets.QWidget):
 
         
 
-        self.tree = QtWidgets.QTreeWidget(self)
+        self.tree = myTree(self)
         self.tree.setHeaderLabel("")
         self.createTreeItems()
         shorcut = QtWidgets.QShortcut(32, 
@@ -179,7 +197,6 @@ class Window(QtWidgets.QWidget):
         self.checkBox.setText("Exit on first fail")
         grid.addWidget(self.checkBox, 6, 5, 1, 1)
 
-        self.tree.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
 
         self.testsuite_running = False
         self.loadBackUp()
@@ -219,7 +236,7 @@ class Window(QtWidgets.QWidget):
                             Qt.ItemIsUserCheckable)
             for element in self.data[key]:
                 child = QtWidgets.QTreeWidgetItem(parent)
-                child.setFlags(child.flags() | Qt.ItemIsUserCheckable)
+                child.setFlags((child.flags() | Qt.ItemIsUserCheckable) & ~Qt.ItemIsDropEnabled)
                 child.setText(0, element)
                 child.setCheckState(0, Qt.Unchecked)
         self.tree.expandAll()
