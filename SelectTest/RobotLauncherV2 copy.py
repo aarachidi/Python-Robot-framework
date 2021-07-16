@@ -156,13 +156,11 @@ class Window(QtWidgets.QWidget):
 
         self.tree.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
 
-        self.testsuite_running = False
         self.loadBackUp()
 
 
     def loadBackUp(self):
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
-        print("Loading backup configuration from : " + pa)
         if os.path.exists(pa):
             dic = self.readFromXmlFile(pa)
             if(len(dic.keys()) > 0):
@@ -254,13 +252,9 @@ class Window(QtWidgets.QWidget):
         dic = self.getCheckedItem()
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
         self.createXMLFile(dic, pa)
+        STOP_SIGNAL_MONITOR.__init__() 
         chdir(self.path)
         run("./", **self.option, listener=listener(obj=self), prerunmodifier=OrderTest(self))
-
-        STOP_SIGNAL_MONITOR.__init__()
-        self.testsuite_running = True
-        run("./", **self.option, listener=listener(obj=self))
-        self.testsuite_running = False
         chdir(current_path)
         self.updateProgress(100)
         self.text.setText("")
@@ -296,7 +290,7 @@ class Window(QtWidgets.QWidget):
                 dict[file].append(element.name)
         self.path, self.option, self.data = path, dict_Option, dict
         self.createTreeItems()
-        self.loadBackUp()
+
 
     def getCheckedItem(self):
         checked_items = []
@@ -343,7 +337,7 @@ class Window(QtWidgets.QWidget):
         os.system("start " + "report.html")
 
     def keyPressEvent(self, event):
-        if event.key() == 16777220 and not self.testsuite_running :
+        if event.key() == 16777220:
             self.clickMethodLaunch(event)
 
     def openFileNameDialog(self):
