@@ -311,8 +311,9 @@ class Window(QtWidgets.QWidget):
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
         self.createXMLFile(dic, pa)
         file = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
-        self.createTree(file)
-        self.disableButton()
+        if file:
+            self.createTree(file)
+            self.disableButton()
 
     def createTree(self, file):
         path, dict_Option = self.listOfOption()
@@ -349,6 +350,16 @@ class Window(QtWidgets.QWidget):
 
         recurse(self.tree.invisibleRootItem())
         return dic
+    
+    def checkOrUncheckAll(self, choice):
+        def recurse(parent_item):
+            for i in range(parent_item.childCount()):
+                child = parent_item.child(i)
+                if choice == "check":
+                    child.setCheckState(0, Qt.Checked)
+                elif choice == "uncheck":
+                    child.setCheckState(0, Qt.Unchecked)
+        recurse(self.tree.invisibleRootItem())
 
     def getCheckedItemCount(self):
         dic = {}
