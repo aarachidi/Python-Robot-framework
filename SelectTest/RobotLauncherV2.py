@@ -132,7 +132,7 @@ class Window(QtWidgets.QWidget):
         grid.addWidget(self.pybutton3, 10, 1)
 
         #Select Suite Button
-        self.pybutton4 = QtWidgets.QPushButton('Choose Suite', self)
+        self.pybutton4 = QtWidgets.QPushButton('Select Suite', self)
         self.pybutton4.resize(100, 60)
         self.pybutton4.clicked.connect(self.clickMethodSuite)
         grid.addWidget(self.pybutton4, 9, 1)

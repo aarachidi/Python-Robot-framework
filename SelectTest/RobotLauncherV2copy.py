@@ -75,7 +75,27 @@ class TestCasesFinder(SuiteVisitor):
 
     def visit_test(self, test):
         self.tests.append(test)
-        
+
+class myTree(QtWidgets.QTreeWidget):
+    def __init__(self, parent=None):
+        QtWidgets.QTreeWidget.__init__(self, parent)
+        self.setDragDropMode(self.InternalMove)
+        self.setDragEnabled(True)
+        self.setDropIndicatorShown(True)
+    
+    def dragEnterEvent(self, event):
+        item = self.itemAt(event.pos())
+        #print(item.text(0))
+        QtWidgets.QTreeWidget.dragEnterEvent(self, event)
+
+    def dragMoveEvent(self, event):
+        item = self.itemAt(event.pos())
+        QtWidgets.QTreeWidget.dragMoveEvent(self, event)
+    
+    def dropEvent(self, event):
+        item = self.itemAt(event.pos())
+        print(item.text(0))
+        return super().dropEvent(event)
 
 
 class Window(QtWidgets.QWidget):
@@ -89,7 +109,7 @@ class Window(QtWidgets.QWidget):
 
         
 
-        self.tree = QtWidgets.QTreeWidget(self)
+        self.tree = myTree(self)
         self.tree.setHeaderLabel("")
         self.createTreeItems()
         shorcut = QtWidgets.QShortcut(32, 
@@ -163,22 +183,8 @@ class Window(QtWidgets.QWidget):
         grid.addWidget(self.config, 1, 1, 1, 5)
         self.setLayout(grid)
 
-        self.tree.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
-        self.tree.setDragEnabled(True)
-        self.tree.setDropIndicatorShown(True)
 
         self.loadBackUp()
-
-    def startDrag(self, actions):
-        items = self.selectedItems()
-        self._dragroot = self.itemRootIndex(items and items[0])
-        QtWidgets.QTreeWidget.startDrag(self, actions)
-
-    def dragEnterEvent(self, event):
-        self._drag_event(event, True)
-
-    def dragMoveEvent(self, event):
-        self._drag_event(event, False)
 
     def loadBackUp(self):
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
@@ -210,10 +216,10 @@ class Window(QtWidgets.QWidget):
             title = key_temp.replace(".robot", "")
             parent.setText(0, title)
             parent.setFlags(parent.flags() | Qt.ItemIsTristate |
-                            Qt.ItemIsUserCheckable)
+                            Qt.ItemIsUserCheckable )
             for element in self.data[key]:
                 child = QtWidgets.QTreeWidgetItem(parent)
-                child.setFlags(child.flags() | Qt.ItemIsUserCheckable)
+                child.setFlags((child.flags() | Qt.ItemIsUserCheckable) & ~Qt.ItemIsDropEnabled)
                 child.setText(0, element)
                 child.setCheckState(0, Qt.Unchecked)
         self.tree.expandAll()
