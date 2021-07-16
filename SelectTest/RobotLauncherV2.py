@@ -144,7 +144,7 @@ class Window(QtWidgets.QWidget):
         grid.addWidget(self.pybutton2, 10, 5)
 
         #Load Button
-        self.pybutton3 = QtWidgets.QPushButton('Load', self)
+        self.pybutton3 = QtWidgets.QPushButton('Load configuration', self)
         self.pybutton3.resize(100, 60)
         self.pybutton3.clicked.connect(self.clickMethodLoad)
         grid.addWidget(self.pybutton3, 10, 1)
@@ -153,7 +153,7 @@ class Window(QtWidgets.QWidget):
         self.pybutton4 = QtWidgets.QPushButton('Select Suite', self)
         self.pybutton4.resize(100, 60)
         self.pybutton4.clicked.connect(self.clickMethodSuite)
-        grid.addWidget(self.pybutton4, 9, 1)
+        grid.addWidget(self.pybutton4, 0, 1)
 
         #Abord Test Button
         self.pybutton5 = QtWidgets.QPushButton('Abord', self)
@@ -183,7 +183,7 @@ class Window(QtWidgets.QWidget):
         #Text of current config file
         self.config = QtWidgets.QLabel(text="")
         self.config.setFont(QtGui.QFont('Helvetica font', 13))
-        grid.addWidget(self.config, 0, 1, 1, 5)
+        grid.addWidget(self.config, 0, 2, 1, 5)
         self.setLayout(grid)
 
         #Text of Suite path
