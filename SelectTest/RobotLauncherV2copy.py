@@ -23,6 +23,15 @@ class OrderTest(SuiteVisitor):
 
     def start_suite(self, suite):
         """Remove tests that match the given pattern."""
+        arr_suite = []
+        if(len(suite.suites) > 0):
+            list_Item = self.obj.getCheckedItem()
+            keys = list_Item.keys()
+            for key in keys:
+                for el in suite.suites:
+                    if(el.name.lower() == key.lower()):
+                        arr_suite.append(el)
+            suite.suites = arr_suite
         arr = []
         for element in self.obj.option['test']:
             for el in suite.tests:

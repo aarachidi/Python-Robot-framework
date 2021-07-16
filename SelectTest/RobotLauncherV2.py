@@ -23,6 +23,15 @@ class OrderTest(SuiteVisitor):
 
     def start_suite(self, suite):
         """Remove tests that match the given pattern."""
+        arr_suite = []
+        if(len(suite.suites) > 0):
+            list_Item = self.obj.getCheckedItem()
+            keys = list_Item.keys()
+            for key in keys:
+                for el in suite.suites:
+                    if(el.name.lower() == key.lower()):
+                        arr_suite.append(el)
+            suite.suites = arr_suite
         arr = []
         for element in self.obj.option['test']:
             for el in suite.tests:
@@ -255,11 +264,10 @@ class Window(QtWidgets.QWidget):
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
         self.createXMLFile(dic, pa)
         chdir(self.path)
-        run("./", **self.option, listener=listener(obj=self), prerunmodifier=OrderTest(self))
 
         STOP_SIGNAL_MONITOR.__init__()
         self.testsuite_running = True
-        run("./", **self.option, listener=listener(obj=self))
+        run("./", **self.option, listener=listener(obj=self), prerunmodifier=OrderTest(self))
         self.testsuite_running = False
         chdir(current_path)
         self.updateProgress(100)
