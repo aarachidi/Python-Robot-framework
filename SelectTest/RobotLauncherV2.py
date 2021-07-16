@@ -23,15 +23,6 @@ class OrderTest(SuiteVisitor):
 
     def start_suite(self, suite):
         """Remove tests that match the given pattern."""
-        arr_suite = []
-        if(len(suite.suites) > 0):
-            list_Item = self.obj.getCheckedItem()
-            keys = list_Item.keys()
-            for key in keys:
-                for el in suite.suites:
-                    if(el.name.lower() == key.lower()):
-                        arr_suite.append(el)
-            suite.suites = arr_suite
         arr = []
         for element in self.obj.option['test']:
             for el in suite.tests:
@@ -232,8 +223,8 @@ class Window(QtWidgets.QWidget):
             key_temp = ntpath.basename(key)
             title = key_temp.replace(".robot", "")
             parent.setText(0, title)
-            parent.setFlags(parent.flags() | Qt.ItemIsTristate |
-                            Qt.ItemIsUserCheckable)
+            parent.setFlags((parent.flags() | Qt.ItemIsTristate |
+                            Qt.ItemIsUserCheckable) & ~Qt.ItemIsDragEnabled)
             for element in self.data[key]:
                 child = QtWidgets.QTreeWidgetItem(parent)
                 child.setFlags((child.flags() | Qt.ItemIsUserCheckable) & ~Qt.ItemIsDropEnabled)
@@ -243,6 +234,7 @@ class Window(QtWidgets.QWidget):
         self.tree.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.tree.itemClicked.connect(self.disableButton)
         self.tree.itemSelectionChanged.connect(self.disableButton)
+
 
     def checkSelectedItem(self):
         def recurse(parent_item):
@@ -320,7 +312,7 @@ class Window(QtWidgets.QWidget):
         self.createXMLFile(dic, pa)
         file = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
         self.createTree(file)
-        print(self.path)
+        self.disableButton()
 
     def createTree(self, file):
         path, dict_Option = self.listOfOption()
