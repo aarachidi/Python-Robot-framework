@@ -63,7 +63,7 @@ class listener:
         self.obj.colorActuelTest(name, "actuel")
 
     def end_test(self, name, attrs):
-        if self.obj.checkBox.isChecked :
+        if self.obj.checkBox.isChecked() :
             if attrs['status'] == "FAIL" and self.clicked == False:
                 self.clicked = True
                 self.obj.abordTest()
