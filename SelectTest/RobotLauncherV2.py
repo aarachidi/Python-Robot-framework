@@ -314,6 +314,7 @@ class Window(QtWidgets.QWidget):
         if file:
             self.createTree(file)
             self.disableButton()
+            self.checkOrUncheckAll("check")
 
     def createTree(self, file):
         path, dict_Option = self.listOfOption()
