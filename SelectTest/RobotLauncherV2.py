@@ -481,7 +481,6 @@ class Window(QtWidgets.QWidget):
         try:
             tree = ET.parse(path)
             root = tree.getroot()
-            self.config.setText("Configuration file : " + (ntpath.basename(path)).replace(".xml", ""))
             for elem in root:
                 dic[elem.attrib['name']] = {}
                 for subelem in elem:
@@ -495,7 +494,9 @@ class Window(QtWidgets.QWidget):
             msg.setWindowTitle("Error")
             msg.exec_()
             return {}
+        self.config.setText("Configuration file : " + (ntpath.basename(path)).replace(".xml", ""))
         self.path = root.attrib['path']
+        self.testPath.setText("Suite Path : " + self.path)
         return dic
     
     def unckeckAll(self):
