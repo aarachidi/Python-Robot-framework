@@ -197,6 +197,7 @@ class Window(QtWidgets.QMainWindow):
         self.pybutton6.resize(100, 60)
         self.pybutton6.clicked.connect(self.openReport)
         grid.addWidget(self.pybutton6, 11, 5)
+        self.pybutton6.setEnabled(False)
 
         #Select/Unselect All
         self.pybutton7 = QtWidgets.QPushButton('Select/Unselect All', central_widget)
@@ -230,6 +231,11 @@ class Window(QtWidgets.QMainWindow):
         self.checkBox = QtWidgets.QCheckBox(central_widget)
         self.checkBox.setText("Exit on first fail")
         grid.addWidget(self.checkBox, 8, 5, 1, 1)
+
+        #CheckBob for opening report after test finished
+        self.checkBox2 = QtWidgets.QCheckBox(central_widget)
+        self.checkBox2.setText("Open report when finished")
+        grid.addWidget(self.checkBox2, 8, 3, 1, 1)
 
         central_widget.setLayout(grid)
         
@@ -335,6 +341,7 @@ class Window(QtWidgets.QMainWindow):
         self.pybutton3.setEnabled(True)
         self.pybutton4.setEnabled(True)
         self.pybutton5.setEnabled(False)
+        self.pybutton6.setEnabled(True)
 
     def checkOrUncheckAllButton(self):
         a = self.getUncheckedItemCount()
@@ -366,9 +373,11 @@ class Window(QtWidgets.QMainWindow):
         self.testsuite_running = False
         chdir(current_path)
         self.updateProgress(100)
-        self.text.setText("")
+        self.text.setText("Actual Suite Test : ")
         self.setInitialColor()
         self.setWidgetEnabled()
+        if self.checkBox2.isChecked() :
+            self.openReport()
 
     def abordTest(self):
         try:
@@ -471,7 +480,8 @@ class Window(QtWidgets.QMainWindow):
         self.openFileNameDialog()
     
     def openReport(self):
-        os.system("start " + "report.html")
+        if self.pybutton6.isEnabled():
+            os.system("start " + "report.html")
 
     def keyPressEvent(self, event):
         if event.key() == 16777220 and not self.testsuite_running :
