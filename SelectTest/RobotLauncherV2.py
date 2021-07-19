@@ -100,12 +100,11 @@ class Window(QtWidgets.QWidget):
         
         # List of tests
         self.path, self.option, self.data = self.listOfTest()
-
         
 
         self.tree = myTree(self)
         self.tree.setHeaderLabel("")
-        self.createTreeItems()
+        self.createTreeItems(self.data)
         shorcut = QtWidgets.QShortcut(32, 
             self.tree, 
             context=QtCore.Qt.WidgetShortcut,
@@ -180,7 +179,7 @@ class Window(QtWidgets.QWidget):
         #Text of current config file
         self.config = QtWidgets.QLabel(text="")
         self.config.setFont(QtGui.QFont('Helvetica font', 13))
-        grid.addWidget(self.config, 0, 2, 1, 5)
+        grid.addWidget(self.config, 0, 2, 1, 4)
         self.setLayout(grid)
 
         #Text of Suite path
@@ -201,15 +200,10 @@ class Window(QtWidgets.QWidget):
 
     def loadBackUp(self):
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
-        print("Loading backup configuration from : " + pa)
         if os.path.exists(pa):
+            print("Loading backup configuration from : " + pa)
             dic = self.readFromXmlFile(pa)
-            if(len(dic.keys()) > 0):
-                self.unckeckAll()
-            for key in dic.keys():
-                if(len(dic[key]) > 0):
-                    for subElement in dic[key]:
-                        self.searchForItem(key, subElement)
+            self.createTreeItems(dic)
             self.disableButton()
 
     def disableButton(self):
@@ -220,8 +214,8 @@ class Window(QtWidgets.QWidget):
             self.pybutton.setEnabled(True)
             self.pybutton2.setEnabled(True)
 
-    def createTreeItems(self):
-        keys = self.data.keys()
+    def createTreeItems(self, dic):
+        keys = dic.keys()
         if len(keys) > 0:
             self.tree.clear()
         for key in keys:
@@ -231,16 +225,39 @@ class Window(QtWidgets.QWidget):
             parent.setText(0, title)
             parent.setFlags((parent.flags() | Qt.ItemIsTristate |
                             Qt.ItemIsUserCheckable) & ~Qt.ItemIsDragEnabled)
-            for element in self.data[key]:
+            key2 = dic[key].keys()
+            for k in key2:
                 child = QtWidgets.QTreeWidgetItem(parent)
                 child.setFlags((child.flags() | Qt.ItemIsUserCheckable) & ~Qt.ItemIsDropEnabled)
-                child.setText(0, element)
-                child.setCheckState(0, Qt.Unchecked)
+                child.setText(0, k)
+                if(dic[key][k]["status"] == "Check"):
+                    child.setCheckState(0, Qt.Checked)
+                else:
+                    child.setCheckState(0, Qt.Unchecked)
         self.tree.expandAll()
         self.tree.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.tree.itemClicked.connect(self.disableButton)
         self.tree.itemSelectionChanged.connect(self.disableButton)
 
+    def getTreeState(self):
+        dic = {}
+
+        def recurse(parent_item):
+            for i in range(parent_item.childCount()):
+                child = parent_item.child(i)
+                grand_children = child.childCount()
+                if grand_children > 0:
+                    dic[child.text(0)] = {}
+                    recurse(child)
+
+                if grand_children == 0:
+                    dic[parent_item.text(0)][child.text(0)] = {}
+                    if child.checkState(0) == Qt.Checked:
+                        dic[parent_item.text(0)][child.text(0)]["status"] = "Check"
+                    else:
+                        dic[parent_item.text(0)][child.text(0)]["status"] = "Uncheck"
+        recurse(self.tree.invisibleRootItem())
+        return  dic
 
     def checkSelectedItem(self):
         def recurse(parent_item):
@@ -299,9 +316,9 @@ class Window(QtWidgets.QWidget):
         for key in keys:
             if len(dic[key]) != 0:
                 self.option['test'] += dic[key]
-        dic = self.getCheckedItem()
+        dic2 = self.getTreeState()
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
-        self.createXMLFile(dic, pa)
+        self.createXMLFile(dic2, pa)
         chdir(self.path)
 
         STOP_SIGNAL_MONITOR.__init__()
@@ -321,7 +338,7 @@ class Window(QtWidgets.QWidget):
             pass
 
     def clickMethodSuite(self):
-        dic = self.getCheckedItem()
+        dic = self.getTreeState()
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
         self.createXMLFile(dic, pa)
         file = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
@@ -330,22 +347,23 @@ class Window(QtWidgets.QWidget):
             self.disableButton()
             self.checkOrUncheckAll("check")
 
-    def createTree(self, file):
+    def createTree(self, fileP):
         path, dict_Option = self.listOfOption()
-        path = file
+        path = fileP
         files = glob.glob(path+"/*.robot")
         dict = {}
         for file in files:
-            dict[file] = []
+            dict[file] = {}
             builder = TestSuiteBuilder()
             testsuite = builder.build(file)
             finder = TestCasesFinder()
             testsuite.visit(finder)
             for element in finder.tests:
-                dict[file].append(element.name)
+                dict[file][element.name] = {}
+                dict[file][element.name]["status"] = "Unchecked"
         self.path, self.option, self.data = path, dict_Option, dict
         self.testPath.setText("Suite Path : " + self.path)
-        self.createTreeItems()
+        self.createTreeItems(dict)
 
     def getCheckedItem(self):
         checked_items = []
@@ -427,12 +445,7 @@ class Window(QtWidgets.QWidget):
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","Document XML (*.xml)", options=options)
         if fileName:
             dic = self.readFromXmlFile(fileName)
-            if(len(dic.keys()) > 0):
-                self.unckeckAll()
-            for key in dic.keys():
-                if(len(dic[key]) > 0):
-                    for subElement in dic[key]:
-                        self.searchForItem(key, subElement)
+            self.createTreeItems(dic)
     
     def updateProgress(self, value):
         self.pbar.setValue(value)
@@ -442,7 +455,7 @@ class Window(QtWidgets.QWidget):
         options |= QtWidgets.QFileDialog.DontUseNativeDialog
         fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self,"QFileDialog.getSaveFileName()","","Document XML (*.xml)", options=options)
         if fileName:
-            dic = self.getCheckedItem()
+            dic = self.getTreeState()
             if(".xml" not in fileName):
                 fileName += ".xml"
             self.createXMLFile(dic, fileName)
@@ -450,13 +463,15 @@ class Window(QtWidgets.QWidget):
     def createXMLFile(self, dic, path):
         keys = dic.keys()
         data = ET.Element('Tests')
-        data.set('path', self.path)
+        data.set('path', os.path.abspath(self.path))
         for key in keys:
             testName = ET.SubElement(data, "Test")
             testName.set('name',key)
-            for element in dic[key]:
+            key2 = dic[key].keys()
+            for k in key2:
                 elem = ET.SubElement(testName, "Element")
-                elem.set('name',element)
+                elem.set('name',k)
+                elem.set('status', dic[key][k]['status'])
         mydata = ET.tostring(data)
         myfile = open(path, "wb")
         myfile.write(mydata)
@@ -468,10 +483,10 @@ class Window(QtWidgets.QWidget):
             root = tree.getroot()
             self.config.setText("Configuration file : " + (ntpath.basename(path)).replace(".xml", ""))
             for elem in root:
-                dic[elem.attrib['name']] = []
+                dic[elem.attrib['name']] = {}
                 for subelem in elem:
-                    dic[elem.attrib['name']].append(subelem.attrib['name'])
-            self.createTree(root.attrib['path'])
+                    dic[elem.attrib['name']][subelem.attrib['name']] = {}
+                    dic[elem.attrib['name']][subelem.attrib['name']]['status'] = subelem.attrib['status']
         except:
             dic = {}
             msg = QtWidgets.QMessageBox()
@@ -479,6 +494,8 @@ class Window(QtWidgets.QWidget):
             msg.setText("File's format not valid")
             msg.setWindowTitle("Error")
             msg.exec_()
+            return {}
+        self.path = root.attrib['path']
         return dic
     
     def unckeckAll(self):
@@ -538,13 +555,14 @@ class Window(QtWidgets.QWidget):
         files = glob.glob(path+"/*.robot")
         dict = {}
         for file in files:
-            dict[file] = []
+            dict[file] = {}
             builder = TestSuiteBuilder()
             testsuite = builder.build(file)
             finder = TestCasesFinder()
             testsuite.visit(finder)
             for element in finder.tests:
-                dict[file].append(element.name)
+                dict[file][element.name] = {}
+                dict[file][element.name]["status"] = "Unchecked"
         return path, dict_Option, dict
     
     def listOfOption(self):

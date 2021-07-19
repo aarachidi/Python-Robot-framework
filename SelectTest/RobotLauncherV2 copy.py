@@ -23,15 +23,6 @@ class OrderTest(SuiteVisitor):
 
     def start_suite(self, suite):
         """Remove tests that match the given pattern."""
-        arr_suite = []
-        if(len(suite.suites) > 0):
-            list_Item = self.obj.getCheckedItem()
-            keys = list_Item.keys()
-            for key in keys:
-                for el in suite.suites:
-                    if(el.name.lower() == key.lower()):
-                        arr_suite.append(el)
-            suite.suites = arr_suite
         arr = []
         for element in self.obj.option['test']:
             for el in suite.tests:
@@ -49,6 +40,7 @@ class listener:
         self.obj = obj
         self.prog = obj.getCheckedItemCount()
         self.suite = ""
+        self.clicked = False
         try:
             self.prog = 100//self.prog
         except:
@@ -62,6 +54,10 @@ class listener:
         self.obj.colorActuelTest(name, "actuel")
 
     def end_test(self, name, attrs):
+        if self.obj.checkBox.isChecked() :
+            if attrs['status'] == "FAIL" and self.clicked == False:
+                self.clicked = True
+                self.obj.abordTest()
         self.obj.updateProgress(self.obj.pbar.value() + self.prog)
         self.obj.colorActuelTest(name, attrs['status'])
 
@@ -85,7 +81,6 @@ class myTree(QtWidgets.QTreeWidget):
     
     def dragEnterEvent(self, event):
         item = self.itemAt(event.pos())
-        #print(item.text(0))
         QtWidgets.QTreeWidget.dragEnterEvent(self, event)
 
     def dragMoveEvent(self, event):
@@ -120,7 +115,7 @@ class Window(QtWidgets.QWidget):
 
         # Tree position
         self.tree.resize(500, 400)
-        grid.addWidget(self.tree, 2, 1, 3, 5)
+        grid.addWidget(self.tree, 2, 1, 4, 5)
         self.tree.setColumnWidth(0, 400)
         
 
@@ -129,7 +124,7 @@ class Window(QtWidgets.QWidget):
         self.pybutton.resize(100, 60)
         self.pybutton.clicked.connect(self.clickMethodLaunch)
         self.pybutton.setEnabled(False)
-        grid.addWidget(self.pybutton, 8, 3)
+        grid.addWidget(self.pybutton, 10, 3)
 
 
         #Save Button
@@ -137,56 +132,77 @@ class Window(QtWidgets.QWidget):
         self.pybutton2.resize(100, 60)
         self.pybutton2.setEnabled(False)
         self.pybutton2.clicked.connect(self.clickMethodSave)
-        grid.addWidget(self.pybutton2, 8, 5)
+        grid.addWidget(self.pybutton2, 10, 5)
 
         #Load Button
-        self.pybutton3 = QtWidgets.QPushButton('Load', self)
+        self.pybutton3 = QtWidgets.QPushButton('Load configuration', self)
         self.pybutton3.resize(100, 60)
         self.pybutton3.clicked.connect(self.clickMethodLoad)
-        grid.addWidget(self.pybutton3, 8, 1)
+        grid.addWidget(self.pybutton3, 10, 1)
 
         #Select Suite Button
-        self.pybutton4 = QtWidgets.QPushButton('Choose Suite', self)
+        self.pybutton4 = QtWidgets.QPushButton('Select Suite', self)
         self.pybutton4.resize(100, 60)
         self.pybutton4.clicked.connect(self.clickMethodSuite)
-        grid.addWidget(self.pybutton4, 7, 1)
+        grid.addWidget(self.pybutton4, 0, 1)
 
         #Abord Test Button
         self.pybutton5 = QtWidgets.QPushButton('Abord', self)
         self.pybutton5.resize(100, 60)
         self.pybutton5.clicked.connect(self.abordTest)
-        grid.addWidget(self.pybutton5, 7, 3)
+        grid.addWidget(self.pybutton5, 9, 3)
         self.pybutton5.setEnabled(False)
 
         #Open Report
         self.pybutton6 = QtWidgets.QPushButton('Open report', self)
         self.pybutton6.resize(100, 60)
         self.pybutton6.clicked.connect(self.openReport)
-        grid.addWidget(self.pybutton6, 7, 5)
+        grid.addWidget(self.pybutton6, 9, 5)
+
+        #Select/Unselect All
+        self.pybutton7 = QtWidgets.QPushButton('Select/Unselect All', self)
+        self.pybutton7.resize(100, 60)
+        self.pybutton7.clicked.connect(self.checkOrUncheckAllButton)
+        grid.addWidget(self.pybutton7, 9, 1)
 
         grid.setSpacing(50)
 
         #Progress bar
         self.pbar = QtWidgets.QProgressBar(self)
         self.pbar.resize(300, 30)
-        grid.addWidget(self.pbar, 5, 1, 1, 5)
+        grid.addWidget(self.pbar, 7, 1, 1, 5)
 
         #Text of current test
         self.text = QtWidgets.QLabel(text="")
         self.text.setFont(QtGui.QFont('Helvetica font', 20))
-        grid.addWidget(self.text, 6, 1, 1, 5)
+        grid.addWidget(self.text, 8, 1, 1, 5)
 
         #Text of current config file
         self.config = QtWidgets.QLabel(text="")
         self.config.setFont(QtGui.QFont('Helvetica font', 13))
-        grid.addWidget(self.config, 1, 1, 1, 5)
+        grid.addWidget(self.config, 0, 2, 1, 5)
         self.setLayout(grid)
 
+        #Text of Suite path
+        self.testPath = QtWidgets.QLabel(text="Suite Path : " + self.path)
+        self.testPath.setFont(QtGui.QFont('Helvetica font', 13))
+        grid.addWidget(self.testPath , 1, 1, 1, 4)
+        self.setLayout(grid)
+
+        #CheckBox for exit if test fail
+        self.checkBox = QtWidgets.QCheckBox(self)
+        self.checkBox.setText("Exit on first fail")
+        grid.addWidget(self.checkBox, 6, 5, 1, 1)
+
+
+        self.testsuite_running = False
         self.loadBackUp()
+
 
     def loadBackUp(self):
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
         if os.path.exists(pa):
+            print("Loading backup configuration from : " + pa)
             dic = self.readFromXmlFile(pa)
             if(len(dic.keys()) > 0):
                 self.unckeckAll()
@@ -195,8 +211,6 @@ class Window(QtWidgets.QWidget):
                     for subElement in dic[key]:
                         self.searchForItem(key, subElement)
             self.disableButton()
-        
-    
 
     def disableButton(self):
         if(self.getCheckedItemCount() == 0):
@@ -215,8 +229,8 @@ class Window(QtWidgets.QWidget):
             key_temp = ntpath.basename(key)
             title = key_temp.replace(".robot", "")
             parent.setText(0, title)
-            parent.setFlags(parent.flags() | Qt.ItemIsTristate |
-                            Qt.ItemIsUserCheckable )
+            parent.setFlags((parent.flags() | Qt.ItemIsTristate |
+                            Qt.ItemIsUserCheckable) & ~Qt.ItemIsDragEnabled)
             for element in self.data[key]:
                 child = QtWidgets.QTreeWidgetItem(parent)
                 child.setFlags((child.flags() | Qt.ItemIsUserCheckable) & ~Qt.ItemIsDropEnabled)
@@ -265,6 +279,14 @@ class Window(QtWidgets.QWidget):
         self.pybutton4.setEnabled(True)
         self.pybutton5.setEnabled(False)
 
+    def checkOrUncheckAllButton(self):
+        a = self.getUncheckedItemCount()
+        if(a == 0):
+            self.checkOrUncheckAll("uncheck")
+        else:
+            self.checkOrUncheckAll("check")
+        self.disableButton()
+
     def clickMethodLaunch(self, event):
         dic = self.getCheckedItem()
         keys = dic.keys()
@@ -277,12 +299,15 @@ class Window(QtWidgets.QWidget):
         for key in keys:
             if len(dic[key]) != 0:
                 self.option['test'] += dic[key]
+        dic = self.getCheckedItem()
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
-        dic2 = self.getTreeState()
-        self.createXMLFile(dic2, pa)
-        STOP_SIGNAL_MONITOR.__init__() 
+        self.createXMLFile(dic, pa)
         chdir(self.path)
+
+        STOP_SIGNAL_MONITOR.__init__()
+        self.testsuite_running = True
         run("./", **self.option, listener=listener(obj=self), prerunmodifier=OrderTest(self))
+        self.testsuite_running = False
         chdir(current_path)
         self.updateProgress(100)
         self.text.setText("")
@@ -296,12 +321,14 @@ class Window(QtWidgets.QWidget):
             pass
 
     def clickMethodSuite(self):
-        dic = self.getTreeState()
+        dic = self.getCheckedItem()
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
         self.createXMLFile(dic, pa)
         file = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
-        self.createTree(file)
-        print(self.path)
+        if file:
+            self.createTree(file)
+            self.disableButton()
+            self.checkOrUncheckAll("check")
 
     def createTree(self, file):
         path, dict_Option = self.listOfOption()
@@ -317,8 +344,8 @@ class Window(QtWidgets.QWidget):
             for element in finder.tests:
                 dict[file].append(element.name)
         self.path, self.option, self.data = path, dict_Option, dict
+        self.testPath.setText("Suite Path : " + self.path)
         self.createTreeItems()
-
 
     def getCheckedItem(self):
         checked_items = []
@@ -338,6 +365,16 @@ class Window(QtWidgets.QWidget):
 
         recurse(self.tree.invisibleRootItem())
         return dic
+    
+    def checkOrUncheckAll(self, choice):
+        def recurse(parent_item):
+            for i in range(parent_item.childCount()):
+                child = parent_item.child(i)
+                if choice == "check":
+                    child.setCheckState(0, Qt.Checked)
+                elif choice == "uncheck":
+                    child.setCheckState(0, Qt.Unchecked)
+        recurse(self.tree.invisibleRootItem())
 
     def getCheckedItemCount(self):
         dic = {}
@@ -355,6 +392,22 @@ class Window(QtWidgets.QWidget):
         recurse(self.tree.invisibleRootItem())
         return dic['count']
     
+    def getUncheckedItemCount(self):
+        dic = {}
+        dic['count'] = 0
+
+        def recurse(parent_item):
+            for i in range(parent_item.childCount()):
+                child = parent_item.child(i)
+                grand_children = child.childCount()
+                if grand_children > 0:
+                    recurse(child)
+
+                if child.checkState(0) == Qt.Unchecked and grand_children == 0:
+                    dic['count'] += 1
+        recurse(self.tree.invisibleRootItem())
+        return dic['count']
+    
     def clickMethodSave(self, event):
         self.saveFileDialog()
 
@@ -365,7 +418,7 @@ class Window(QtWidgets.QWidget):
         os.system("start " + "report.html")
 
     def keyPressEvent(self, event):
-        if event.key() == 16777220:
+        if event.key() == 16777220 and not self.testsuite_running :
             self.clickMethodLaunch(event)
 
     def openFileNameDialog(self):
@@ -389,43 +442,21 @@ class Window(QtWidgets.QWidget):
         options |= QtWidgets.QFileDialog.DontUseNativeDialog
         fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self,"QFileDialog.getSaveFileName()","","Document XML (*.xml)", options=options)
         if fileName:
-            dic = self.getTreeState()
+            dic = self.getCheckedItem()
             if(".xml" not in fileName):
                 fileName += ".xml"
             self.createXMLFile(dic, fileName)
     
-    def getTreeState(self):
-        dic = {}
-
-        def recurse(parent_item):
-            for i in range(parent_item.childCount()):
-                child = parent_item.child(i)
-                grand_children = child.childCount()
-                if grand_children > 0:
-                    dic[child.text(0)] = {}
-                    recurse(child)
-
-                if grand_children == 0:
-                    dic[parent_item.text(0)][child.text(0)] = {}
-                    if child.checkState(0) == Qt.Checked:
-                        dic[parent_item.text(0)][child.text(0)]["status"] = "Check"
-                    else:
-                        dic[parent_item.text(0)][child.text(0)]["status"] = "Uncheck"
-        recurse(self.tree.invisibleRootItem())
-        return  dic
-    
     def createXMLFile(self, dic, path):
         keys = dic.keys()
         data = ET.Element('Tests')
-        data.set('path', os.path.abspath(self.path))
+        data.set('path', self.path)
         for key in keys:
             testName = ET.SubElement(data, "Test")
             testName.set('name',key)
-            key2 = dic[key].keys()
-            for k in key2:
+            for element in dic[key]:
                 elem = ET.SubElement(testName, "Element")
-                elem.set('name',k)
-                elem.set('status', dic[key][k]['status'])
+                elem.set('name',element)
         mydata = ET.tostring(data)
         myfile = open(path, "wb")
         myfile.write(mydata)
@@ -437,10 +468,10 @@ class Window(QtWidgets.QWidget):
             root = tree.getroot()
             self.config.setText("Configuration file : " + (ntpath.basename(path)).replace(".xml", ""))
             for elem in root:
-                dic[elem.attrib['name']] = {}
+                dic[elem.attrib['name']] = []
                 for subelem in elem:
-                    dic[elem.attrib['name']][subelem.attrib['name']] = {}
-                    dic[elem.attrib['name']][subelem.attrib['name']]['status'] = subelem.attrib['status']
+                    dic[elem.attrib['name']].append(subelem.attrib['name'])
+            self.createTree(root.attrib['path'])
         except:
             dic = {}
             msg = QtWidgets.QMessageBox()
@@ -541,7 +572,7 @@ class Window(QtWidgets.QWidget):
 application = QtWidgets.QApplication(sys.argv)
 window = Window()
 window.setWindowTitle('Robot Launcher')
-window.resize(800, 800)
+window.resize(800, 900)
 window.show()
 window.activateWindow()
 sys.exit(application.exec_())
