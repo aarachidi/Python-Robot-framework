@@ -97,6 +97,50 @@ class Window(QtWidgets.QWidget):
         super(Window, self).__init__(parent)
         grid = QtWidgets.QGridLayout()
 
+        #Menu bar
+        self.bar = QtWidgets.QMenuBar()
+        file = self.bar.addMenu("Option")
+        run = self.bar.addMenu("Run")
+        view = self.bar.addMenu("View")
+
+
+        SelectSuite = QtWidgets.QAction("Select Suite...", self)
+        SelectSuite.setShortcut("Ctrl+d")
+        file.addAction(SelectSuite)
+        SelectSuite.triggered.connect(self.clickMethodSuite)
+
+        load = QtWidgets.QAction("Load configuration...", self)
+        load.setShortcut("Ctrl+l")
+        file.addAction(load)
+        load.triggered.connect(self.clickMethodLoad)
+
+        Save = QtWidgets.QAction("Save...", self)
+        Save.setShortcut("Ctrl+s")
+        file.addAction(Save)
+        Save.triggered.connect(self.clickMethodSave)
+        
+        launch = QtWidgets.QAction("Launch", self)
+        launch.setShortcut("Enter")
+        run.addAction(launch)
+        launch.triggered.connect(self.clickMethodLaunch)
+
+        quit = QtWidgets.QAction("Quit", self)
+        quit.setShortcut("Escape")
+        run.addAction(quit)
+        quit.triggered.connect(self.close)
+
+        selectAll = QtWidgets.QAction("Select/Unselect All", self)
+        selectAll.setShortcut("Ctrl+p")
+        view.addAction(selectAll)
+        selectAll.triggered.connect(self.checkOrUncheckAllButton)
+
+        openR = QtWidgets.QAction("Open Report", self)
+        openR.setShortcut("Ctrl+r")
+        view.addAction(openR)
+        openR.triggered.connect(self.openReport)
+
+        grid.addWidget(self.bar, 0, 1, 1, 5)
+
         
         # List of tests
         self.path, self.option, self.data = self.listOfTest()
@@ -114,7 +158,7 @@ class Window(QtWidgets.QWidget):
 
         # Tree position
         self.tree.resize(500, 400)
-        grid.addWidget(self.tree, 2, 1, 4, 5)
+        grid.addWidget(self.tree, 3, 1, 5, 5)
         self.tree.setColumnWidth(0, 400)
         
 
@@ -123,77 +167,77 @@ class Window(QtWidgets.QWidget):
         self.pybutton.resize(100, 60)
         self.pybutton.clicked.connect(self.clickMethodLaunch)
         self.pybutton.setEnabled(False)
-        grid.addWidget(self.pybutton, 10, 3)
+        grid.addWidget(self.pybutton, 12, 1)
 
 
         #Save Button
-        self.pybutton2 = QtWidgets.QPushButton('Save', self)
+        self.pybutton2 = QtWidgets.QPushButton('Save...', self)
         self.pybutton2.resize(100, 60)
         self.pybutton2.setEnabled(False)
         self.pybutton2.clicked.connect(self.clickMethodSave)
-        grid.addWidget(self.pybutton2, 10, 5)
+        grid.addWidget(self.pybutton2, 12, 5)
 
         #Load Button
-        self.pybutton3 = QtWidgets.QPushButton('Load configuration', self)
+        self.pybutton3 = QtWidgets.QPushButton('Load configuration...', self)
         self.pybutton3.resize(100, 60)
         self.pybutton3.clicked.connect(self.clickMethodLoad)
-        grid.addWidget(self.pybutton3, 10, 1)
+        grid.addWidget(self.pybutton3, 1, 1)
 
         #Select Suite Button
-        self.pybutton4 = QtWidgets.QPushButton('Select Suite', self)
+        self.pybutton4 = QtWidgets.QPushButton('Select Suite...', self)
         self.pybutton4.resize(100, 60)
         self.pybutton4.clicked.connect(self.clickMethodSuite)
-        grid.addWidget(self.pybutton4, 0, 1)
+        grid.addWidget(self.pybutton4, 2, 1)
 
         #Abord Test Button
-        self.pybutton5 = QtWidgets.QPushButton('Abord', self)
+        self.pybutton5 = QtWidgets.QPushButton('Abort', self)
         self.pybutton5.resize(100, 60)
         self.pybutton5.clicked.connect(self.abordTest)
-        grid.addWidget(self.pybutton5, 9, 3)
+        grid.addWidget(self.pybutton5, 11, 1)
         self.pybutton5.setEnabled(False)
 
         #Open Report
         self.pybutton6 = QtWidgets.QPushButton('Open report', self)
         self.pybutton6.resize(100, 60)
         self.pybutton6.clicked.connect(self.openReport)
-        grid.addWidget(self.pybutton6, 9, 5)
+        grid.addWidget(self.pybutton6, 11, 5)
 
         #Select/Unselect All
         self.pybutton7 = QtWidgets.QPushButton('Select/Unselect All', self)
         self.pybutton7.resize(100, 60)
         self.pybutton7.clicked.connect(self.checkOrUncheckAllButton)
-        grid.addWidget(self.pybutton7, 9, 1)
+        grid.addWidget(self.pybutton7, 8, 1)
 
-        grid.setSpacing(50)
+        grid.setSpacing(20)
 
         #Progress bar
         self.pbar = QtWidgets.QProgressBar(self)
         self.pbar.resize(300, 30)
-        grid.addWidget(self.pbar, 7, 1, 1, 5)
+        grid.addWidget(self.pbar, 9, 1, 1, 5)
 
         #Text of current test
         self.text = QtWidgets.QLabel(text="")
         self.text.setFont(QtGui.QFont('Helvetica font', 20))
-        grid.addWidget(self.text, 8, 1, 1, 5)
+        grid.addWidget(self.text, 10, 1, 1, 5)
 
         #Text of current config file
         self.config = QtWidgets.QLabel(text="")
         self.config.setFont(QtGui.QFont('Helvetica font', 13))
-        grid.addWidget(self.config, 0, 2, 1, 4)
+        grid.addWidget(self.config, 1, 2, 1, 4)
         self.setLayout(grid)
 
         #Text of Suite path
         self.testPath = QtWidgets.QLabel(text="Suite Path : " + self.path)
         self.testPath.setFont(QtGui.QFont('Helvetica font', 13))
-        grid.addWidget(self.testPath , 1, 1, 1, 4)
+        grid.addWidget(self.testPath , 2, 2, 1, 4)
         self.setLayout(grid)
 
         #CheckBox for exit if test fail
         self.checkBox = QtWidgets.QCheckBox(self)
         self.checkBox.setText("Exit on first fail")
-        grid.addWidget(self.checkBox, 6, 5, 1, 1)
+        grid.addWidget(self.checkBox, 8, 5, 1, 1)
 
-
+        self.bar.setStyleSheet("margin: 13px; background-color: white;padding: 2px;")
         self.testsuite_running = False
         self.loadBackUp()
 
@@ -316,9 +360,6 @@ class Window(QtWidgets.QWidget):
         for key in keys:
             if len(dic[key]) != 0:
                 self.option['test'] += dic[key]
-        dic2 = self.getTreeState()
-        pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
-        self.createXMLFile(dic2, pa)
         chdir(self.path)
 
         STOP_SIGNAL_MONITOR.__init__()
@@ -338,14 +379,11 @@ class Window(QtWidgets.QWidget):
             pass
 
     def clickMethodSuite(self):
-        dic = self.getTreeState()
-        pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
-        self.createXMLFile(dic, pa)
         file = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
         if file:
             self.createTree(file)
-            self.disableButton()
             self.checkOrUncheckAll("check")
+            self.disableButton()
 
     def createTree(self, fileP):
         path, dict_Option = self.listOfOption()
@@ -438,6 +476,11 @@ class Window(QtWidgets.QWidget):
     def keyPressEvent(self, event):
         if event.key() == 16777220 and not self.testsuite_running :
             self.clickMethodLaunch(event)
+        
+    def closeEvent(self, event):
+        dic2 = self.getTreeState()
+        pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
+        self.createXMLFile(dic2, pa)
 
     def openFileNameDialog(self):
         options = QtWidgets.QFileDialog.Options()
