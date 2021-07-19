@@ -4,7 +4,7 @@ from PyQt5.Qt import Qt
 from robot.running import TestSuiteBuilder
 from robot.model import SuiteVisitor
 import glob
-from robot import run
+from robot.run import run
 import xml.etree.ElementTree as ET
 from os import rename, remove, path, getcwd, chdir
 import ntpath
@@ -13,6 +13,7 @@ from robot.api import SuiteVisitor
 import signal
 from robot.running.signalhandler import STOP_SIGNAL_MONITOR
 import signal
+import webbrowser
 
 
 class OrderTest(SuiteVisitor):
@@ -481,7 +482,7 @@ class Window(QtWidgets.QMainWindow):
     
     def openReport(self):
         if self.pybutton6.isEnabled():
-            os.system("start " + "report.html")
+            webbrowser.open('file://' + os.path.realpath("report.html"))
 
     def keyPressEvent(self, event):
         if event.key() == 16777220 and not self.testsuite_running :
