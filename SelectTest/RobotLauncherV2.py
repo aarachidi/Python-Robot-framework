@@ -488,7 +488,10 @@ class Window(QtWidgets.QMainWindow):
         
     def closeEvent(self, event):
         dic2 = self.getTreeState()
-        pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
+        path = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0]
+        if not os.path.exists(path):
+            os.makedirs(path)
+        pa = path + "/backup.xml"
         self.createXMLFile(dic2, pa)
 
     def openFileNameDialog(self):
