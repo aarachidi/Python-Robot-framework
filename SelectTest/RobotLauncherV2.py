@@ -6,7 +6,7 @@ from robot.model import SuiteVisitor
 import glob
 from robot.run import run
 import xml.etree.ElementTree as ET
-from os import rename, remove, path, getcwd, chdir
+from os import path, getcwd, chdir
 import ntpath
 import os
 from robot.api import SuiteVisitor
@@ -23,7 +23,6 @@ class OrderTest(SuiteVisitor):
         
 
     def start_suite(self, suite):
-        """Remove tests that match the given pattern."""
         arr = []
         for element in self.obj.option['test']:
             for el in suite.tests:
@@ -396,20 +395,19 @@ class Window(QtWidgets.QMainWindow):
     def createTree(self, fileP):
         path, dict_Option = self.listOfOption()
         path = fileP
-        files = glob.glob(path+"/*.robot")
-        dict = {}
-        for file in files:
-            dict[file] = {}
-            builder = TestSuiteBuilder()
-            testsuite = builder.build(file)
-            finder = TestCasesFinder()
-            testsuite.visit(finder)
-            for element in finder.tests:
-                dict[file][element.name] = {}
-                dict[file][element.name]["status"] = "Unchecked"
-        self.path, self.option, self.data = path, dict_Option, dict
+        builder = TestSuiteBuilder()
+        testsuite = builder.build(path)
+        finder = TestCasesFinder()
+        testsuite.visit(finder)
+        dic = {}
+        for element in finder.tests:
+            dic[element.source] = {}
+        for element in finder.tests:
+            dic[element.source][element.name] = {}
+            dic[element.source][element.name]["status"] = "Unchecked"
+        self.path, self.option, self.data = path, dict_Option, dic
         self.testPath.setText("Suite Path : " + self.path)
-        self.createTreeItems(dict)
+        self.createTreeItems(dic)
 
     def getCheckedItem(self):
         checked_items = []
@@ -607,18 +605,17 @@ class Window(QtWidgets.QMainWindow):
     
     def listOfTest(self):
         path, dict_Option = self.listOfOption()
-        files = glob.glob(path+"/*.robot")
-        dict = {}
-        for file in files:
-            dict[file] = {}
-            builder = TestSuiteBuilder()
-            testsuite = builder.build(file)
-            finder = TestCasesFinder()
-            testsuite.visit(finder)
-            for element in finder.tests:
-                dict[file][element.name] = {}
-                dict[file][element.name]["status"] = "Unchecked"
-        return path, dict_Option, dict
+        builder = TestSuiteBuilder()
+        testsuite = builder.build(path)
+        finder = TestCasesFinder()
+        testsuite.visit(finder)
+        dic = {}
+        for element in finder.tests:
+            dic[element.source] = {}
+        for element in finder.tests:
+            dic[element.source][element.name] = {}
+            dic[element.source][element.name]["status"] = "Unchecked"
+        return path, dict_Option, dic
     
     def listOfOption(self):
         dict = {}
