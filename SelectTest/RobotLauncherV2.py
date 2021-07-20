@@ -596,6 +596,7 @@ class Window(QtWidgets.QMainWindow):
                 if grand_children > 0:
                     recurse(child)
                 elif(grand_children == 0 and child.text(0) == name and child.checkState(0) == Qt.Checked):
+                    self.tree.scrollToItem(child)
                     if status == "actuel":
                         child.setFont(0, QtGui.QFont('Arial', 12, QtGui.QFont.Bold))
                     elif status == "PASS":
