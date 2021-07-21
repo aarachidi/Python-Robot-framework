@@ -610,15 +610,18 @@ class Window(QtWidgets.QMainWindow):
     def listOfTest(self):
         path, dict_Option = self.listOfOption()
         builder = TestSuiteBuilder()
-        testsuite = builder.build(path)
-        finder = TestCasesFinder()
-        testsuite.visit(finder)
         dic = {}
-        for element in finder.tests:
-            dic[element.source] = {}
-        for element in finder.tests:
-            dic[element.source][element.name] = {}
-            dic[element.source][element.name]["status"] = "Unchecked"
+        try:
+            testsuite = builder.build(path)
+            finder = TestCasesFinder()
+            testsuite.visit(finder)
+            for element in finder.tests:
+                dic[element.source] = {}
+            for element in finder.tests:
+                dic[element.source][element.name] = {}
+                dic[element.source][element.name]["status"] = "Unchecked"
+        except:
+            pass
         return path, dict_Option, dic
     
     def listOfOption(self):
