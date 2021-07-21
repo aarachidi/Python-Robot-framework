@@ -14,6 +14,7 @@ import signal
 from robot.running.signalhandler import STOP_SIGNAL_MONITOR
 import signal
 import webbrowser
+import time
 
 
 
@@ -77,6 +78,7 @@ class listener:
              if attrs['status'] == "FAIL" and self.clicked == False:
                 self.clicked = True
                 self.obj.abordTest.emit()
+                time.sleep(1)
         self.obj.endTest.emit(attrs['status'], name, self.prog)
 
 class TestCasesFinder(SuiteVisitor):
@@ -429,7 +431,6 @@ class Window(QtWidgets.QMainWindow):
         except:
             pass
         self.testState = False
-        #self.postThread()
 
     def clickMethodSuite(self):
         file = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
