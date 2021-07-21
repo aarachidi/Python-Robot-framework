@@ -12,7 +12,10 @@ import os
 from robot.api import SuiteVisitor
 import signal
 from robot.running.signalhandler import STOP_SIGNAL_MONITOR
+import signal
 import webbrowser
+
+
 
 class Worker(QtCore.QObject):
     'Object managing the simulation'
@@ -29,22 +32,18 @@ class Worker(QtCore.QObject):
         self.stateBox = stateBox
 
     def task(self):
-        run("./", **self.option, listener=listener(obj=self))
+        run("./", **self.option, listener=listener(obj=self), prerunmodifier=OrderTest(self.option))
         self.postThread.emit()
-
-
-
-
 
 class OrderTest(SuiteVisitor):
 
-    def __init__(self, obj):
-        self.obj = obj
+    def __init__(self, option):
+        self.option = option
         
 
     def start_suite(self, suite):
         arr = []
-        for element in self.obj.option['test']:
+        for element in self.option['test']:
             for el in suite.tests:
                 if(el.name == element):
                     arr.append(el)
@@ -79,11 +78,6 @@ class listener:
                 self.clicked = True
                 self.obj.abordTest.emit()
         self.obj.endTest.emit(attrs['status'], name, self.prog)
-        pass
-
-
-    def end_suite(self, name, attrs):
-        a = 4
 
 class TestCasesFinder(SuiteVisitor):
     def __init__(self):
@@ -158,8 +152,6 @@ class Window(QtWidgets.QMainWindow):
         openR.setShortcut("Ctrl+r")
         run.addAction(openR)
         openR.triggered.connect(self.openReport)
-
-        #grid.addWidget(self.bar, 0, 0, 1, 5)
         
         # List of tests
         self.path, self.option, self.data = self.listOfTest()
@@ -234,6 +226,7 @@ class Window(QtWidgets.QMainWindow):
         self.pbar = QtWidgets.QProgressBar(central_widget)
         self.pbar.resize(300, 30)
         grid.addWidget(self.pbar, 9, 1, 1, 5)
+        self.setStyleSheet("QProgressBar::chunk { background-color: #05B8CC}  QProgressBar { border: 2px solid grey; border-radius: 5px; text-align: center;}")
 
         #Text of current test
         self.text = QtWidgets.QLabel(text="Actual Suite Test : ")
@@ -264,16 +257,22 @@ class Window(QtWidgets.QMainWindow):
         
         self.pbar.setValue(0)
         self.testsuite_running = False
+        self.testState = False
         self.loadBackUp()
 
 
     def loadBackUp(self):
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
         if os.path.exists(pa):
-            print("Loading backup configuration from : " + pa)
-            dic = self.readFromXmlFile(pa)
-            self.createTreeItems(dic)
-            self.disableButton()
+            path, dic = self.readFromXmlFile(pa)
+            if self.path == getcwd() or os.path.abspath(path) == os.path.abspath(self.path):
+                print("Loading backup configuration from : " + pa)
+                self.config.setText("Configuration file : " + (ntpath.basename(pa)).replace(".xml", ""))
+                self.path = path
+                self.testPath.setText("Suite Path : " + self.path)
+                self.createTreeItems(dic)
+                self.disableButton()
+                
 
     def disableButton(self):
         if(self.getCheckedItemCount() == 0):
@@ -299,6 +298,7 @@ class Window(QtWidgets.QMainWindow):
                 child = QtWidgets.QTreeWidgetItem(parent)
                 child.setFlags((child.flags() | Qt.ItemIsUserCheckable) & ~Qt.ItemIsDropEnabled)
                 child.setText(0, k)
+                child.setFont(0, QtGui.QFont('Arial', 10))
                 if(dic[key][k]["status"] == "Check"):
                     child.setCheckState(0, Qt.Checked)
                 else:
@@ -307,6 +307,7 @@ class Window(QtWidgets.QMainWindow):
         self.tree.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.tree.itemClicked.connect(self.disableButton)
         self.tree.itemSelectionChanged.connect(self.disableButton)
+        
 
     def getTreeState(self):
         dic = {}
@@ -373,9 +374,10 @@ class Window(QtWidgets.QMainWindow):
         else:
             self.checkOrUncheckAll("check")
         self.disableButton()
-
+    
     def clickMethodLaunch(self, event):
-        if self.getCheckedItemCount() == 0:
+        count = self.getCheckedItemCount()
+        if count == 0:
             return None
         dic = self.getCheckedItem()
         keys = dic.keys()
@@ -389,11 +391,11 @@ class Window(QtWidgets.QMainWindow):
             if len(dic[key]) != 0:
                 self.option['test'] += dic[key]
         chdir(self.path)
-
+        self.text.setStyleSheet("color:black;")
         STOP_SIGNAL_MONITOR.__init__()
         self.testsuite_running = True
-
-        self.worker = Worker(self.option, 0,  self.checkBox.isChecked())
+        self.testState = True
+        self.worker = Worker(self.option, count,  self.checkBox.isChecked())
         self.worker.moveToThread(self.thread)
         self.thread.started.connect(self.worker.task)
         self.worker.startTest.connect(self.start_test)
@@ -402,12 +404,17 @@ class Window(QtWidgets.QMainWindow):
         self.worker.abordTest.connect(self.abordTest)
 
         self.thread.start()
-
+    
     def postThread(self):
         self.testsuite_running = False
         chdir(self.current_path)
         self.updateProgress(100)
-        self.text.setText("Actual Suite Test : ")
+        if self.testState:
+            self.text.setText("Final State : Pass")
+            self.text.setStyleSheet("color:green;")
+        else:
+            self.text.setText("Final State : Fail")
+            self.text.setStyleSheet("color:red;")
         self.setInitialColor()
         self.setWidgetEnabled()
         if self.checkBox2.isChecked() :
@@ -415,13 +422,14 @@ class Window(QtWidgets.QMainWindow):
         self.thread.quit()
         self.thread.wait()
         self.thread = QtCore.QThread(parent=self)
-
+    
     def abordTest(self):
         try:
             STOP_SIGNAL_MONITOR(signal.SIGINT, None)
         except:
             pass
-        self.postThread()
+        self.testState = False
+        #self.postThread()
 
     def clickMethodSuite(self):
         file = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
@@ -537,8 +545,12 @@ class Window(QtWidgets.QMainWindow):
         options |= QtWidgets.QFileDialog.DontUseNativeDialog
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","Document XML (*.xml)", options=options)
         if fileName:
-            dic = self.readFromXmlFile(fileName)
+            path, dic = self.readFromXmlFile(fileName)
+            self.config.setText("Configuration file : " + (ntpath.basename(fileName)).replace(".xml", ""))
+            self.path = path
+            self.testPath.setText("Suite Path : " + self.path)
             self.createTreeItems(dic)
+            self.disableButton()
     
     def updateProgress(self, value):
         self.pbar.setValue(value)
@@ -586,11 +598,9 @@ class Window(QtWidgets.QMainWindow):
             msg.setText("File's format not valid")
             msg.setWindowTitle("Error")
             msg.exec_()
-            return {}
-        self.config.setText("Configuration file : " + (ntpath.basename(path)).replace(".xml", ""))
-        self.path = root.attrib['path']
-        self.testPath.setText("Suite Path : " + self.path)
-        return dic
+            return self.path, self.data
+        
+        return root.attrib['path'],dic
     
     def unckeckAll(self):
         def recurse(parent_item):
@@ -622,7 +632,7 @@ class Window(QtWidgets.QMainWindow):
                     recurse(child)
                 else:
                     child.setForeground(0,QtGui.QBrush(QtGui.QColor("black")))
-                    child.setFont(0, QtGui.QFont('Arial', 8))
+                    child.setFont(0, QtGui.QFont('Arial', 10))
         recurse(self.tree.invisibleRootItem())
     
     def colorActuelTest(self, name, status):
@@ -639,30 +649,34 @@ class Window(QtWidgets.QMainWindow):
                         child.setFont(0, QtGui.QFont('Arial', 12, QtGui.QFont.Bold))
                     elif status == "PASS":
                         child.setForeground(0,QtGui.QBrush(QtGui.QColor("green")))
-                        child.setFont(0, QtGui.QFont('Arial', 8))
+                        child.setFont(0, QtGui.QFont('Arial', 10))
                     elif status == "FAIL":
+                        self.testState = False
                         child.setForeground(0,QtGui.QBrush(QtGui.QColor("red")))
-                        child.setFont(0, QtGui.QFont('Arial', 8))
+                        child.setFont(0, QtGui.QFont('Arial', 10))
         recurse(self.tree.invisibleRootItem())
     
     def listOfTest(self):
         path, dict_Option = self.listOfOption()
         builder = TestSuiteBuilder()
-        testsuite = builder.build(path)
-        finder = TestCasesFinder()
-        testsuite.visit(finder)
         dic = {}
-        for element in finder.tests:
-            dic[element.source] = {}
-        for element in finder.tests:
-            dic[element.source][element.name] = {}
-            dic[element.source][element.name]["status"] = "Unchecked"
+        try:
+            testsuite = builder.build(path)
+            finder = TestCasesFinder()
+            testsuite.visit(finder)
+            for element in finder.tests:
+                dic[element.source] = {}
+            for element in finder.tests:
+                dic[element.source][element.name] = {}
+                dic[element.source][element.name]["status"] = "Unchecked"
+        except:
+            pass
         return path, dict_Option, dic
     
     def listOfOption(self):
         dict = {}
         i = 1
-        path = "./"
+        path = getcwd()
         while(i < len(sys.argv)):
             if(i < len(sys.argv) - 1):
                 key = sys.argv[i].strip("-")
