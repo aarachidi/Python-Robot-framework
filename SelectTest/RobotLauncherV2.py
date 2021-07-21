@@ -567,7 +567,7 @@ class Window(QtWidgets.QMainWindow):
             msg.setText("File's format not valid")
             msg.setWindowTitle("Error")
             msg.exec_()
-            return self.data
+            return self.path, self.data
         
         return root.attrib['path'],dic
     
