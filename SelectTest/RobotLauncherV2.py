@@ -209,6 +209,7 @@ class Window(QtWidgets.QMainWindow):
         self.pbar = QtWidgets.QProgressBar(central_widget)
         self.pbar.resize(300, 30)
         grid.addWidget(self.pbar, 9, 1, 1, 5)
+        self.setStyleSheet("QProgressBar::chunk { background-color: #05B8CC}  QProgressBar { border: 2px solid grey; border-radius: 5px; text-align: center;}")
 
         #Text of current test
         self.text = QtWidgets.QLabel(text="Actual Suite Test : ")
@@ -239,6 +240,7 @@ class Window(QtWidgets.QMainWindow):
         
         self.pbar.setValue(0)
         self.testsuite_running = False
+        self.testState = False
         self.loadBackUp()
 
 
@@ -279,6 +281,7 @@ class Window(QtWidgets.QMainWindow):
                 child = QtWidgets.QTreeWidgetItem(parent)
                 child.setFlags((child.flags() | Qt.ItemIsUserCheckable) & ~Qt.ItemIsDropEnabled)
                 child.setText(0, k)
+                child.setFont(0, QtGui.QFont('Arial', 10))
                 if(dic[key][k]["status"] == "Check"):
                     child.setCheckState(0, Qt.Checked)
                 else:
@@ -370,14 +373,21 @@ class Window(QtWidgets.QMainWindow):
             if len(dic[key]) != 0:
                 self.option['test'] += dic[key]
         chdir(self.path)
+        self.text.setStyleSheet("color:black;")
 
         STOP_SIGNAL_MONITOR.__init__()
         self.testsuite_running = True
+        self.testState = True
         run("./", **self.option, listener=listener(obj=self), prerunmodifier=OrderTest(self))
         self.testsuite_running = False
         chdir(current_path)
         self.updateProgress(100)
-        self.text.setText("Actual Suite Test : ")
+        if self.testState:
+            self.text.setText("Pass")
+            self.text.setStyleSheet("color:green;")
+        else:
+            self.text.setText("Fail")
+            self.text.setStyleSheet("color:red;")
         self.setInitialColor()
         self.setWidgetEnabled()
         if self.checkBox2.isChecked() :
@@ -388,6 +398,7 @@ class Window(QtWidgets.QMainWindow):
             STOP_SIGNAL_MONITOR(signal.SIGINT, None)
         except:
             pass
+        self.testState = False
 
     def clickMethodSuite(self):
         file = str(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
@@ -590,7 +601,7 @@ class Window(QtWidgets.QMainWindow):
                     recurse(child)
                 else:
                     child.setForeground(0,QtGui.QBrush(QtGui.QColor("black")))
-                    child.setFont(0, QtGui.QFont('Arial', 8))
+                    child.setFont(0, QtGui.QFont('Arial', 10))
         recurse(self.tree.invisibleRootItem())
     
     def colorActuelTest(self, name, status):
@@ -607,10 +618,11 @@ class Window(QtWidgets.QMainWindow):
                         child.setFont(0, QtGui.QFont('Arial', 12, QtGui.QFont.Bold))
                     elif status == "PASS":
                         child.setForeground(0,QtGui.QBrush(QtGui.QColor("green")))
-                        child.setFont(0, QtGui.QFont('Arial', 8))
+                        child.setFont(0, QtGui.QFont('Arial', 10))
                     elif status == "FAIL":
+                        self.testState = False
                         child.setForeground(0,QtGui.QBrush(QtGui.QColor("red")))
-                        child.setFont(0, QtGui.QFont('Arial', 8))
+                        child.setFont(0, QtGui.QFont('Arial', 10))
         recurse(self.tree.invisibleRootItem())
     
     def listOfTest(self):
