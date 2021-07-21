@@ -135,8 +135,6 @@ class Window(QtWidgets.QMainWindow):
         openR.setShortcut("Ctrl+r")
         run.addAction(openR)
         openR.triggered.connect(self.openReport)
-
-        #grid.addWidget(self.bar, 0, 0, 1, 5)
         
         # List of tests
         self.path, self.option, self.data = self.listOfTest()
@@ -247,10 +245,15 @@ class Window(QtWidgets.QMainWindow):
     def loadBackUp(self):
         pa = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.AppDataLocation)[0] + "/backup.xml"
         if os.path.exists(pa):
-            print("Loading backup configuration from : " + pa)
-            dic = self.readFromXmlFile(pa)
-            self.createTreeItems(dic)
-            self.disableButton()
+            path, dic = self.readFromXmlFile(pa)
+            if self.path == getcwd() or os.path.abspath(path) == os.path.abspath(self.path):
+                print("Loading backup configuration from : " + pa)
+                self.config.setText("Configuration file : " + (ntpath.basename(pa)).replace(".xml", ""))
+                self.path = path
+                self.testPath.setText("Suite Path : " + self.path)
+                self.createTreeItems(dic)
+                self.disableButton()
+                
 
     def disableButton(self):
         if(self.getCheckedItemCount() == 0):
@@ -284,6 +287,7 @@ class Window(QtWidgets.QMainWindow):
         self.tree.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.tree.itemClicked.connect(self.disableButton)
         self.tree.itemSelectionChanged.connect(self.disableButton)
+        
 
     def getTreeState(self):
         dic = {}
@@ -499,8 +503,12 @@ class Window(QtWidgets.QMainWindow):
         options |= QtWidgets.QFileDialog.DontUseNativeDialog
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","Document XML (*.xml)", options=options)
         if fileName:
-            dic = self.readFromXmlFile(fileName)
+            path, dic = self.readFromXmlFile(fileName)
+            self.config.setText("Configuration file : " + (ntpath.basename(fileName)).replace(".xml", ""))
+            self.path = path
+            self.testPath.setText("Suite Path : " + self.path)
             self.createTreeItems(dic)
+            self.disableButton()
     
     def updateProgress(self, value):
         self.pbar.setValue(value)
@@ -548,11 +556,9 @@ class Window(QtWidgets.QMainWindow):
             msg.setText("File's format not valid")
             msg.setWindowTitle("Error")
             msg.exec_()
-            return {}
-        self.config.setText("Configuration file : " + (ntpath.basename(path)).replace(".xml", ""))
-        self.path = root.attrib['path']
-        self.testPath.setText("Suite Path : " + self.path)
-        return dic
+            return self.data
+        
+        return root.attrib['path'],dic
     
     def unckeckAll(self):
         def recurse(parent_item):
@@ -627,7 +633,7 @@ class Window(QtWidgets.QMainWindow):
     def listOfOption(self):
         dict = {}
         i = 1
-        path = "./"
+        path = getcwd()
         while(i < len(sys.argv)):
             if(i < len(sys.argv) - 1):
                 key = sys.argv[i].strip("-")
