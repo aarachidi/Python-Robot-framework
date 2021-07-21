@@ -383,10 +383,10 @@ class Window(QtWidgets.QMainWindow):
         chdir(current_path)
         self.updateProgress(100)
         if self.testState:
-            self.text.setText("Pass")
+            self.text.setText("Final State : Pass")
             self.text.setStyleSheet("color:green;")
         else:
-            self.text.setText("Fail")
+            self.text.setText("Final State : Fail")
             self.text.setStyleSheet("color:red;")
         self.setInitialColor()
         self.setWidgetEnabled()

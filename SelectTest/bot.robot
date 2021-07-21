@@ -12,8 +12,7 @@ TestFunction
     get_value_from_user     enter an input
     Pause Execution        Test is paused for now
 testFunction2
-    get_value_from_user     enter an input
-    Pause Execution        Test is paused for now
+    sleep     15s
 testFunction3
     get_value_from_user     enter an input
     Pause Execution        Test is paused for now

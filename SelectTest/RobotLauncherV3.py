@@ -51,7 +51,7 @@ class OrderTest(SuiteVisitor):
 class listener:
     ROBOT_LISTENER_API_VERSION = 2
 
-    def __init__(self, filename='listen.txt', obj=None):
+    def __init__(self, obj=None):
         self.obj = obj
         self.prog = obj.getCheckedItemCount()
         self.suite = ""
@@ -113,10 +113,11 @@ class Window(QtWidgets.QMainWindow):
 
         #Qthread
         self.thread = QtCore.QThread()
-        self.thread.start()
+        
 
         self.worker = Worker(self)
         self.worker.moveToThread(self.thread)
+        self.thread.started.connect(self.worker.task)
 
         central_widget = QtWidgets.QWidget()
         self.setCentralWidget(central_widget)
@@ -391,7 +392,7 @@ class Window(QtWidgets.QMainWindow):
 
         STOP_SIGNAL_MONITOR.__init__()
         self.testsuite_running = True
-        self.worker.task()
+        self.thread.start()
 
     def postThread(self):
         self.testsuite_running = False
