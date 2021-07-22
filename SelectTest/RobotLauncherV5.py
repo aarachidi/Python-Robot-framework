@@ -29,6 +29,7 @@ class SimpleProc(Process):
         self.queue = from_mother
     
     def run(self):
+        STOP_SIGNAL_MONITOR.__init__()
         run("./", **self.option, listener=listener(obj=self), prerunmodifier=OrderTest(self.option))
         try:
             text = ["End"]
@@ -456,7 +457,6 @@ class Window(QtWidgets.QMainWindow):
                 self.option['test'] += dic[key]
         chdir(self.path)
         self.text.setStyleSheet("color:black;")
-        STOP_SIGNAL_MONITOR.__init__()
         self.testsuite_running = True
         self.testState = True
         self.worker = Worker(self.option, count,  self.checkBox.isChecked())
@@ -465,7 +465,7 @@ class Window(QtWidgets.QMainWindow):
         self.worker.startTest.connect(self.start_test)
         self.worker.endTest.connect(self.end_test)
         self.worker.postThread.connect(self.postThread)
-        self.worker.abordTest.connect(self.abordTest)
+        self.worker.abordTest.connect(self.abordTest2)
 
         self.thread.start()
     
@@ -489,6 +489,9 @@ class Window(QtWidgets.QMainWindow):
     
     def abordTest(self):
         queue.put("Abord")
+        self.testState = False
+    
+    def abordTest2(self):
         self.testState = False
 
     def clickMethodSuite(self):
