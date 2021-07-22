@@ -14,6 +14,7 @@ import signal
 from robot.running.signalhandler import STOP_SIGNAL_MONITOR
 import signal
 import webbrowser
+from threading import currentThread
 
 
 class OrderTest(SuiteVisitor):

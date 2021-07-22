@@ -16,6 +16,26 @@ from robot.running.signalhandler import STOP_SIGNAL_MONITOR
 import signal
 import webbrowser
 import time
+from multiprocessing import Process, Queue, Pipe
+
+class SimpleProc(Process):
+    def __init__(self, to_emitter: Pipe, from_mother: Queue, daemon=True):
+        super().__init__()
+        self.daemon = daemon
+        self.emit = to_emitter
+        self.option = None
+        self.count = 0
+        self.stateBox = None
+        self.queue = from_mother
+    
+    def run(self):
+        run("./", **self.option, listener=listener(obj=self), prerunmodifier=OrderTest(self.option))
+        try:
+            text = ["End"]
+            self.emit.send(text)
+        except:
+            pass
+
 
 
 
@@ -32,10 +52,32 @@ class Worker(QtCore.QObject):
         self.option = option
         self.count = count
         self.stateBox = stateBox
+        self.proc = None
 
     def task(self):
-        run("./", **self.option, listener=listener(obj=self), prerunmodifier=OrderTest(self.option))
-        self.postThread.emit()
+        mother_pipe, child_pipe = Pipe()
+        self.proc = SimpleProc(child_pipe, queue)
+        self.proc.option = self.option
+        self.proc.count = self.count
+        self.proc.stateBox = self.stateBox
+        self.proc.start()
+        while True:
+            try:
+                text = mother_pipe.recv()
+                if(text[0] == "startTest"):
+                    self.startTest.emit(text[1], text[2])
+                elif(text[0] == "endTest"):
+                    self.endTest.emit(text[1], text[2], text[3])
+                elif(text[0] == "End"):
+                    self.proc.terminate()
+                    self.postThread.emit()
+                    break
+                elif(text[0] == "Abord"):
+                    self.abordTest.emit()
+            except EOFError:
+                break
+            else:
+                pass
 
 class OrderTest(SuiteVisitor):
 
@@ -71,16 +113,35 @@ class listener:
         self.suite = name
 
     def start_test(self, name, attrs):
-        self.obj.startTest.emit(self.suite, name)
+        a = [ "startTest", self.suite, name]
+        self.obj.emit.send(a)
         pass
+    
+    def start_keyword(self, name, attrs):
+        try:
+            text = self.obj.queue.get(block=False)
+            if(text == "Abord"):
+                try:
+                    STOP_SIGNAL_MONITOR(signal.SIGINT, None)
+                except:
+                    pass
+                time.sleep(1)
+        except:
+            pass
 
     def end_test(self, name, attrs):
-        if self.obj.stateBox :
-             if attrs['status'] == "FAIL" and self.clicked == False:
-                self.clicked = True
-                self.obj.abordTest.emit()
-                time.sleep(1)
-        self.obj.endTest.emit(attrs['status'], name, self.prog)
+        if self.obj.stateBox and attrs['status'] == "FAIL" and self.clicked == False:
+            self.clicked = True
+            a = ["Abord"]
+            self.obj.emit.send(a)
+            try:
+                STOP_SIGNAL_MONITOR(signal.SIGINT, None)
+            except:
+                pass
+            time.sleep(1)
+        else:
+            a = ["endTest", attrs['status'], name, self.prog]
+            self.obj.emit.send(a)
 
 class TestCasesFinder(SuiteVisitor):
     def __init__(self):
@@ -206,8 +267,8 @@ class Window(QtWidgets.QMainWindow):
         #Abord Test Button
         self.pybutton5 = QtWidgets.QPushButton('Abort', central_widget)
         self.pybutton5.resize(100, 60)
-        self.pybutton5.clicked.connect(self.abordTest)
         grid.addWidget(self.pybutton5, 11, 1)
+        self.pybutton5.clicked.connect(self.abordTest)
         self.pybutton5.setEnabled(False)
 
         #Open Report
@@ -427,10 +488,7 @@ class Window(QtWidgets.QMainWindow):
         self.thread = QtCore.QThread(parent=self)
     
     def abordTest(self):
-        try:
-            STOP_SIGNAL_MONITOR(signal.SIGINT, None)
-        except:
-            pass
+        queue.put("Abord")
         self.testState = False
 
     def clickMethodSuite(self):
@@ -706,7 +764,7 @@ class Window(QtWidgets.QMainWindow):
         self.colorActuelTest(name, status)
 
 if __name__ == "__main__":
-
+    queue = Queue()
     application = QtWidgets.QApplication(sys.argv)
     window = Window()
     window.setWindowTitle('Robot Launcher')
