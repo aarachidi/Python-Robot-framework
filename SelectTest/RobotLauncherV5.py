@@ -589,7 +589,8 @@ class Window(QtWidgets.QMainWindow):
     
     def openReport(self):
         if self.pybutton6.isEnabled():
-            webbrowser.open('file://' + os.path.realpath("report.html"))
+            p = self.path+"/report.html"
+            webbrowser.open('file://' + os.path.realpath(p))
 
     def keyPressEvent(self, event):
         if event.key() == 16777220 and not self.testsuite_running :
