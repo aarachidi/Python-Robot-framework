@@ -4,4 +4,8 @@ Library     QtDialogs.py
 
 *** Test Cases ***
 test Function
-    QtDialogs.pause_execution     test worked
+    pause_execution     first test
+test2
+    execute manual step     second test
+    ${a}=   get_value_from_user     put a val   default value
+    ${user} =	Get Selections From User 	Select user	  user1	  user2	  admin
