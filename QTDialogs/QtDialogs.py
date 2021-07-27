@@ -12,16 +12,16 @@ def pause_execution(message='Test execution paused. Press OK to continue.'):
     myObj = myMessageBox()
     myObj.show(message)
 
-def execute_manual_step(message):
+def execute_manual_step(message, default_error = "Test failed"):
     application = QtWidgets.QApplication(sys.argv)
     myObj = PassFailDialog()
     myObj.show(message)
     if not myObj.result():
-        raise AssertionError("Test failed")
+        raise AssertionError(default_error)
 
-def get_value_from_user(message, default_value=''):
+def get_value_from_user(message = "Value :", default_value=''):
     application = QtWidgets.QApplication(sys.argv)
-    myobj = InputDialog(message="put a value", default= default_value)
+    myobj = InputDialog(message, default= default_value)
     result, stat = myobj.show()
     if not stat:
         raise RuntimeError('No value provided by user')
