@@ -8,19 +8,16 @@ def pause_execution(message='Test execution paused. Press OK to continue.'):
 
     `message` is the message shown in the dialog.
     """
-    application = QtWidgets.QApplication(sys.argv)
     myObj = myMessageBox()
     myObj.show(message)
 
 def execute_manual_step(message, default_error = "Test failed"):
-    application = QtWidgets.QApplication(sys.argv)
     myObj = PassFailDialog()
     myObj.show(message)
     if not myObj.result():
         raise AssertionError(default_error)
 
 def get_value_from_user(message = "Value :", default_value=''):
-    application = QtWidgets.QApplication(sys.argv)
     myobj = InputDialog(message, default= default_value)
     result, stat = myobj.show()
     if not stat:
@@ -28,7 +25,6 @@ def get_value_from_user(message = "Value :", default_value=''):
     return result
 
 def get_selection_from_user(message, *values):
-    application = QtWidgets.QApplication(sys.argv)
     myobj = SelectionDialog(message, values)
     myobj.show()
     application.exec_()
@@ -38,12 +34,13 @@ def get_selection_from_user(message, *values):
 
 
 def get_selections_from_user(message, *values):
-    application = QtWidgets.QApplication(sys.argv)
     myobj = SelectionsDialog(message, values)
     myobj.show()
     application.exec_()
     if myobj.result == None:
         raise RuntimeError('No value provided by user')
     return myobj.result
+
+application = QtWidgets.QApplication(sys.argv)
 
         
