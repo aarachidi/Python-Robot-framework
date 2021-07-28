@@ -13,17 +13,23 @@ class UserMeasure(QtWidgets.QWidget):
         super(UserMeasure, self).__init__(parent)
         self.grid = QtWidgets.QGridLayout()
         self.setLayout(self.grid)
-
-        self.header = []
-        self.gridRow = 10
+        self.gridRow = 4
         self.gridColumn = 0
 
         self.grid.setSpacing(20)
         self.createSpace(1)
+        self.createTable("data.json")
+        
+
+        self.buttonExiste = False
+        
+    
+    def createTable(self, path):
+        self.header = []
+
         #data
-        data = self.loadJson("data.json")
+        data = self.loadJson(path)
         keys = data.keys()
-        self.result = {}
         self.invalidInput = {}
         self.validInput = {}
         self.MaxValues = {}
@@ -32,9 +38,6 @@ class UserMeasure(QtWidgets.QWidget):
         self.writeHeader(data[list(keys)[0]])
         for key in keys:
             self.writeContent(data[key])
-        self.createSpace(1)
-        self.createButton("Validate")
-        self.createSpace(1)
 
     
     def createSpace(self, nbrSpace):
@@ -60,6 +63,7 @@ class UserMeasure(QtWidgets.QWidget):
         button  =QtWidgets.QPushButton(text, self)
         button.setStyleSheet("background-color : #1ED454")
         self.grid.addWidget(button, self.gridRow + 3, 3)
+        self.buttonExiste = True
 
         button.clicked.connect(self.eventHandlerButton)
         self.gridRow += 4
@@ -93,7 +97,7 @@ class UserMeasure(QtWidgets.QWidget):
             entry1 = QtWidgets.QLineEdit(self)
             entry1.mousePressEvent = lambda _, entry=entry1 : entry.selectAll()
             entry1.textChanged.connect(lambda _ , entry=entry1, ma=li['max'], \
-                mi = li["min"], na = name, u= li['unit'] : self.eventHandlerEntry(entry, ma, mi, na, u))
+                mi = li["min"], na = name, u= li['unit'] : self.eventHandlerEntryComplex(entry, ma, mi, na, u))
             self.grid.addWidget(entry1, self.gridRow, self.gridColumn)
             self.gridColumn += 1
 
@@ -119,7 +123,7 @@ class UserMeasure(QtWidgets.QWidget):
             self.gridColumn += 1
 
 
-    def eventHandlerEntry(self, element, max, min, name, type):
+    def eventHandlerEntryComplex(self, element, max, min, name, type):
         if((element.text() == "")):
             element.setStyleSheet("background-color : white")
         elif(max != 0 or min != 0):
@@ -151,6 +155,9 @@ class UserMeasure(QtWidgets.QWidget):
         self.gridRow += 1
 
     def sh(self, name):
+        #Create button if not existe
+        if self.buttonExiste == False:
+            self.createButton("Validate")
         self.createSpace(1)
         self.setWindowTitle(name)
         self.show()
@@ -182,7 +189,7 @@ class UserMeasure(QtWidgets.QWidget):
         f.close()
         return data
 
-application = QtWidgets.QApplication(sys.argv)
-obj = UserMeasure()
-obj.sh("test")
-application.exec_()
+# application = QtWidgets.QApplication(sys.argv)
+# obj = UserMeasure()
+# obj.sh("test")
+# application.exec_()
