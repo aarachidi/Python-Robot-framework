@@ -16,7 +16,7 @@ show
     ${a}=    UserMesures.getResult     
 
 *** Test Cases ***
-test Function 
+test Function2 
     Entry       input1      in      
     Entry       input2      in1    
     Entry       input3      in2   
