@@ -66,7 +66,12 @@ Empty Input
 show
     [Arguments]      @{expected}
     Call Method    ${obj}      sh        @{expected}
-    ${a}=    Call Method    ${obj}       getResult 
+    ${a}=    Call Method    ${obj}       getResult
+
+
+
+
+
 
 
     

@@ -9,4 +9,4 @@ test Function
     init
     Table from Data  data.json
     show        Main Interface
-    Result of Table
+    pause execution    worked
