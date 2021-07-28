@@ -54,12 +54,14 @@ class EasiiDialogs(QtWidgets.QWidget):
         self.gridRow += 1
         
     
-    def createImage(self, path):
+    def createImage(self, path, width = 0, height = 0):
         pixmap = QPixmap(path)
-        pixmap2 = pixmap.scaled(int(pixmap.width()/4), int(pixmap.height()/4))
+        if width == 0 and height == 0:
+            pixmap2 = pixmap.scaled(int(pixmap.width()/4), int(pixmap.height()/4))
+        else:
+            pixmap2 = pixmap.scaled(int(width), int(height))
         label = QtWidgets.QLabel(self)
         label.setPixmap(pixmap2)
-        #label.resize(10, 10)
         self.grid.addWidget(label, self.gridRow, 3, 1, 6)
         self.gridRow += 4
 
@@ -86,8 +88,9 @@ class EasiiDialogs(QtWidgets.QWidget):
         self.grid.addWidget(label, self.gridRow, 2)
         label.setAlignment(Qt.AlignRight)
 
-        entry1.textChanged.connect(lambda: self.eventHandlerEntry(entry1, max, min, name))
-        entry1.mousePressEvent = lambda _ : entry1.selectAll()
+        entry1.textChanged.connect(lambda _ , entry=entry1, ma=max, \
+                mi = min, na = name : self.eventHandlerEntry(entry, ma, mi, na))
+        entry1.mousePressEvent = lambda _, entry=entry1 : entry.selectAll()
         self.result[name] = ""
         self.gridRow += 1
 
@@ -164,17 +167,10 @@ class EasiiDialogs(QtWidgets.QWidget):
         return self.result
 
 
-    # #Customize style of interface
-    # def changePolice(self, style, size):
-    #     self.root.option_add("*Label*Font", (style, size))
-    #     self.root.option_add("*Entry*Font", (style, size))
-    #     self.root.option_add("*Button*Font", (style, size))
-
-
 application = QtWidgets.QApplication(sys.argv)
 a = EasiiDialogs()
 a.setApp(application)
-a.createImage("qrcode001.jpg")
+a.createImage("qrcode001.jpg", 200, 200)
 a.createEntry(name="input1", max=12, min=10, default="10")
 a.createEntry(name="input2", max=12, min=10)
 a.createEntryWithRegex(name="input3", RegexExpress="start.")

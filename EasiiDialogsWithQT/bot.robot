@@ -1,7 +1,7 @@
 ** Settings ***
 Documentation     How to use a custom Python Dialogs.
 Library     OperatingSystem
-Library     test.py
+Library     EasiiDialogs_py.py
 *** Variables *** 
 
 *** Keywords ***
