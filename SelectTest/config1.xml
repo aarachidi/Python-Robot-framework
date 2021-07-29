@@ -1,9 +1,0 @@
-<Tests>
-    <Test name="bot">
-        <Element name="testFunction" />
-        <Element name="testFunction2" />
-    </Test>
-    <Test name="bot2">
-        <Element name="test2 Function" />
-    </Test>
-</Tests>
